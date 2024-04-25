@@ -40,7 +40,13 @@ const ContentRenderer: FC<ContentRendererProps> = ({
                     }}
                   >
                     {members[memberName].spendings.map((spending, index) => {
-                      return <SpendingCard spending={spending} index={index} />;
+                      return (
+                        <SpendingCard
+                          spending={spending}
+                          index={index}
+                          key={`${spending.expenseName}${index}`}
+                        />
+                      );
                     })}
                   </div>
                 );
