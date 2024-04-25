@@ -1,62 +1,74 @@
-import ContainerRow from "@/components/ContainerRow";
-import { Typography, IconButton, TextField } from "@mui/material";
+import { Typography, IconButton, TextField, Stack, Card } from "@mui/material";
 import { Box } from "@mui/system";
 import { FC, useState } from "react";
 import ClearIcon from "@mui/icons-material/Clear";
 
-interface MemberRowProps {
-  memberName: string;
-  onRemove: (memberIndex: number) => void;
-  onBlur: (memberIndex: number, newValue: string) => void;
-  memberIndex: number;
+interface UpdateMemberNameProps {
+  oldMemberName: string;
+  newMemberName: string;
 }
 
-const MemberRow: FC<MemberRowProps> = ({
-  memberName,
-  onRemove,
-  onBlur,
-  memberIndex,
-}) => {
-  const [tempMemberStore, setTempMemberStore] = useState<string>(memberName);
+interface MemberRowProps {
+  memberName: string;
+  onRemove: (memberName: string) => void;
+  onBlur: ({ oldMemberName, newMemberName }: UpdateMemberNameProps) => void;
+}
+
+const MemberRow: FC<MemberRowProps> = ({ memberName, onRemove, onBlur }) => {
+  const [isEditing, setIssEditing] = useState<boolean>(false);
+  const [tempMember, setTempMember] = useState<string>(memberName);
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    onBlur({ oldMemberName: memberName, newMemberName: e.target.value });
+    setIssEditing(false);
+  };
+
+  const handleRemove = () => {
+    onRemove(memberName);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTempMember(e.target.value);
+  };
+
   return (
-    <ContainerRow
-      sx={{
-        gap: 2,
-        flex: 1,
-        display: "flex",
-        alignItems: "center",
-        paddingBottom: 2,
+    <Stack
+      gap={2}
+      direction="row"
+      mb={2}
+      alignItems="center"
+      onClick={() => {
+        setIssEditing(true);
       }}
     >
-      <TextField
-        sx={{
-          border: "solid 1px #ACB4FF",
-          borderRadius: "10px",
-          backgroundColor: "white",
-
-          "& .MuiInputBase-input": {
-            fontWeight: "bolder",
-            px: 4,
-            borderRadius: "10px",
-          },
-        }}
-        value={tempMemberStore}
-        onChange={(e) => setTempMemberStore(e.currentTarget.value)}
-        onBlur={() => onBlur(memberIndex, tempMemberStore)}
-      />
-      <Box>
-        <IconButton
+      {isEditing ? (
+        <Stack direction="row" gap={2} alignItems="center">
+          <TextField
+            value={tempMember}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            autoFocus
+          />
+          <IconButton onClick={handleRemove}>
+            <ClearIcon />
+          </IconButton>
+        </Stack>
+      ) : (
+        <Card
           sx={{
-            backgroundColor: "#5F6FFF",
-            borderRadius: "5px",
-            color: "red",
+            padding: 2,
+            paddingX: 4,
+            flex: 1,
+            margin: "2px",
           }}
-          onClick={() => onRemove(memberIndex)}
+          className="dropshadow"
         >
-          <ClearIcon />
-        </IconButton>
-      </Box>
-    </ContainerRow>
+          <Typography fontWeight="bold" variant="h5">
+            {memberName}
+          </Typography>
+        </Card>
+      )}
+    </Stack>
   );
 };
 

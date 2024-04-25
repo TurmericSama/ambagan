@@ -1,59 +1,65 @@
-import ContainerRow from "@/components/ContainerRow";
-import { IconButton, TextField } from "@mui/material";
-import { Box } from "@mui/system";
-import { FC } from "react";
+import { IconButton, TextField, Stack, styled } from "@mui/material";
+import { FC, useState, FocusEvent, useRef } from "react";
 import CheckIcon from "@mui/icons-material/Check";
 
 interface MemberRowProps {
-  tempMember: string;
-  onAddMember: (newMember: string) => void;
-  onChange: (value: string) => void;
+  onAdd: (memberName: string) => void;
 }
 
-const AddMemberRow: FC<MemberRowProps> = ({
-  tempMember,
-  onAddMember,
-  onChange,
-}) => {
-  return (
-    <ContainerRow
-      sx={{
-        gap: 2,
-        flex: 1,
-        display: "flex",
-        alignItems: "center",
-        alignSelf: "end",
-      }}
-    >
-      <TextField
-        sx={{
-          border: "solid 1px #ACB4FF",
-          borderRadius: "10px",
-          backgroundColor: "white",
+const AddMemberRow: FC<MemberRowProps> = ({ onAdd }) => {
+  const [tempMember, setTempMember] = useState<string>("");
+  const [blur, setBlur] = useState<boolean>(false);
+  const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
+    setBlur(true);
+  };
 
-          "& .MuiInputBase-input": {
-            fontWeight: "bolder",
-            px: 4,
-            borderRadius: "10px",
-          },
-        }}
+  const ref = useRef<HTMLInputElement>(null);
+
+  const resetTempMember = () => {
+    setTempMember("");
+  };
+
+  const handleAddMember = () => {
+    onAdd(tempMember);
+    resetTempMember();
+  };
+  return (
+    <Stack gap={2} direction="row" alignItems="center">
+      <StyledInput
+        ref={ref}
+        className="dropshadow"
         value={tempMember}
-        onChange={(e) => onChange(e.currentTarget.value)}
+        onChange={(e) => setTempMember(e.target.value)}
+        onFocus={() => setBlur(false)}
+        onBlur={handleBlur}
+        InputProps={{
+          endAdornment: (
+            <IconButton
+              sx={{ display: tempMember === "" || !blur ? "none" : "block" }}
+              onClick={handleAddMember}
+            >
+              <CheckIcon fontSize="large" sx={{ color: "green" }} />
+            </IconButton>
+          ),
+        }}
       />
-      <Box>
-        <IconButton
-          sx={{
-            backgroundColor: "#5F6FFF",
-            borderRadius: "5px",
-            color: "lightgreen",
-          }}
-          onClick={() => onAddMember(tempMember)}
-        >
-          <CheckIcon />
-        </IconButton>
-      </Box>
-    </ContainerRow>
+    </Stack>
   );
 };
 
 export default AddMemberRow;
+
+const StyledInput = styled(TextField)(({ theme }) => ({
+  border: "solid 1px #ACB4FF",
+  borderRadius: "10px",
+  backgroundColor: "white",
+
+  "& .MuiInputBase-input": {
+    fontWeight: "bolder",
+    fontSize: "1.5rem",
+    px: 4,
+    borderRadius: "10px",
+    paddingLeft: theme.spacing(4),
+  },
+  flex: 1,
+}));

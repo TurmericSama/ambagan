@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
-import Link from "next/link";
+import ThemeContainer from "@/components/ThemeContainer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,31 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AppBar position="static" sx={{ backgroundColor: "#D9DDFF" }}>
-          <Toolbar variant="dense">
-            <Typography
-              variant="h6"
-              fontWeight="bold"
-              fontStyle="italic"
-              component={Link}
-              href="/"
-              sx={{ color: "#5F6FFF" }}
-            >
-              SPLTR.io
-            </Typography>
-            <Box sx={{ display: "flex", flex: 1, justifyContent: "end" }}>
-              <Button
-                variant="text"
-                LinkComponent={Link}
-                href="manage"
-                sx={{ color: "white" }}
-              >
-                Manage
-              </Button>
-            </Box>
-          </Toolbar>
-        </AppBar>
-        <Box sx={{ p: 2, height: "100%" }}>{children}</Box>
+        <ThemeContainer children={children} />
       </body>
     </html>
   );

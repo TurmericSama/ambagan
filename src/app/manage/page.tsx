@@ -1,106 +1,92 @@
 "use client";
-import ContainerRow from "@/components/ContainerRow";
-import {
-  Card,
-  CardContent,
-  Typography,
-  IconButton,
-  TextField,
-  Box,
-} from "@mui/material";
+import { Stack, Divider } from "@mui/material";
 import React, { useState } from "react";
-import MemberRow from "./MemberRow";
-import HorizontalDivider from "@/components/HorizontalDivider";
 import AddMemberRow from "./AddMemberRow";
+import StyledHeader from "@/components/StyledHeader";
+import { DragDropContext } from "react-beautiful-dnd";
+import ColumnCardContainer from "@/components/ColumnCardContainer";
+import ContainerColumn from "@/components/ContainerColumn";
+import ContentRenderer from "./ContentRenderer";
+import MarginWrapper from "@/components/MarginWrapper";
+import MemberRenderer from "./MemberRenderer";
+import {
+  addNewMember,
+  removeMember,
+  updateMemberName,
+  addBlankMemberSpending,
+} from "./pagefunctions";
 
 interface ManageProps {
   // Add any props you need for the Manage component
 }
 
+const initialDataTemplate = {
+  spendings: [],
+};
+
+interface SharedByTemplate {
+  name: string;
+  id: number;
+}
+
+export interface SpendingDataTemplate {
+  expenseName?: string;
+  amount?: number;
+  sharedBy?: SharedByTemplate[];
+  id: string;
+}
+
+export interface NewColumnDataTemplate {
+  [key: string]: {
+    spendings: SpendingDataTemplate[];
+  };
+}
+
+const blankSpendingObject: SpendingDataTemplate = {
+  expenseName: "",
+  amount: 0,
+  sharedBy: [],
+  id: `tempSpendingId=${Math.random()}`,
+};
+
 const Manage: React.FC<ManageProps> = () => {
   // Add your component logic here
 
-  const [members, setMembers] = useState<string[]>([
-    "Noween",
-    "Paulo",
-    "John",
-    "Doe",
-  ]);
+  const [members, setMembers] = useState<NewColumnDataTemplate>({});
+  const memberNames = Object.keys(members);
 
-  const [tempMember, setTempMember] = useState<string>("");
-
-  const handleRemoveMember = (memberIndex: number) => {
-    const membersCopy = [...members];
-    setMembers(membersCopy.filter((_, index) => index !== memberIndex));
-  };
-
-  const updateMember = (memberIndex: number, newValue: string) => {
-    const membersTemp = [...members];
-    const returnable = membersTemp.map((m, index) =>
-      index === memberIndex ? newValue : m
-    );
-    console.log({ returnable });
-    setMembers(returnable);
-  };
-
-  const addMember = (newMember: string) => {
-    setMembers([...members, newMember]);
-    setTempMember("");
+  const handleDragEnd = (result: any) => {
+    // TODO: Implement logic for handling drag end
   };
 
   return (
-    <ContainerRow sx={{ backgroundColor: "red" }}>
-      <Card
-        sx={{
-          p: 0,
-          border: "solid 1px #ACB4FF",
-          backgroundColor: "#FFFBE9",
-          width: 300,
-          height: "70vh",
-        }}
-        elevation={2}
-        variant="elevation"
-      >
-        <CardContent
-          sx={{
-            "&.MuiCardContent-root:last-child": {
-              padding: "unset",
-              p: 2,
-            },
-            p: 2,
-            height: "100%",
-          }}
-        >
-          <Typography
-            variant="h5"
-            color="#5F6FFF"
-            fontWeight="bold"
-            sx={{ marginBottom: 4 }}
-          >
-            Members
-          </Typography>
-          <Box sx={{ maxHeight: "40%", overflowY: "auto" }}>
-            {members.map((member, index) => {
-              return (
-                <MemberRow
-                  key={`${member}-${index}`}
-                  memberName={member}
-                  onRemove={handleRemoveMember}
-                  onBlur={updateMember}
-                  memberIndex={index}
-                />
-              );
-            })}
-          </Box>
-          <HorizontalDivider />
-          <AddMemberRow
-            onAddMember={addMember}
-            onChange={setTempMember}
-            tempMember={tempMember}
-          />
-        </CardContent>
-      </Card>
-    </ContainerRow>
+    <Stack sx={{ height: "100%" }} direction="row" gap={4}>
+      <ColumnCardContainer sx={{ paddingTop: 4, padding: 3 }}>
+        <StyledHeader variant="h4" mb={4}>
+          Members
+        </StyledHeader>
+        <MemberRenderer
+          memberNames={memberNames}
+          removeMember={removeMember({ setMembers, members })}
+          updateMemberName={updateMemberName({ setMembers, members })}
+        />
+        <Divider orientation="horizontal" flexItem sx={{ marginY: 4 }} />
+        <StyledHeader variant="h4" sx={{ mb: 2 }}>
+          Add Member
+        </StyledHeader>
+        <ContainerColumn>
+          <AddMemberRow onAdd={addNewMember({ members, setMembers })} />
+        </ContainerColumn>
+      </ColumnCardContainer>
+      <Divider orientation="vertical" flexItem />
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <ContentRenderer
+          members={members}
+          memberNames={memberNames}
+          addBlankMemberSpending={addBlankMemberSpending(setMembers, members)}
+        />
+      </DragDropContext>
+    </Stack>
   );
 };
 
