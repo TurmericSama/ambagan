@@ -6,13 +6,12 @@ import { Card, Typography } from "@mui/material";
 interface SpendingCardProps {
   spending: SpendingDataTemplate;
   index: number;
+  key: string;
 }
 
-const SpendingCard: FC<SpendingCardProps> = ({ spending, index }) => {
-  console.log({ spendingCard: spending });
-
+const SpendingCard: FC<SpendingCardProps> = ({ spending, index, key }) => {
   return (
-    <Draggable draggableId={spending.id} index={index}>
+    <Draggable draggableId={spending.id} index={index} key={key}>
       {(provided, snapshot) => (
         <Card
           elevation={2}

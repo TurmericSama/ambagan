@@ -22,9 +22,12 @@ const ContentRenderer: FC<ContentRendererProps> = ({
 }) => {
   return (
     <Stack direction="row" gap={4} sx={{ maxWidth: 1200, overflow: "auto" }}>
-      {memberNames.map((memberName) => {
+      {memberNames.map((memberName, index) => {
         return (
-          <ColumnCardContainer sx={{ paddingTop: 4, padding: 3 }}>
+          <ColumnCardContainer
+            sx={{ paddingTop: 4, padding: 3 }}
+            key={`${memberName}${index}`}
+          >
             <Headers variant="h5" pb={4}>
               {memberName}
             </Headers>
