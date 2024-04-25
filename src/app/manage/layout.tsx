@@ -1,12 +1,10 @@
-import { Box, BoxProps, Container, ContainerProps } from "@mui/material";
-import { FC } from "react";
+import { Container } from "@mui/material";
+import { FC, ReactNode } from "react";
 
-const ManageViewLayout: FC<ContainerProps> = ({ children }) => {
+export default ({ children }: { children: ReactNode }) => {
   return (
     <Container sx={{ height: "100%", pt: 10, width: "100%" }}>
       {children}
     </Container>
   );
 };
-
-export default ManageViewLayout;
