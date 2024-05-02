@@ -1,9 +1,10 @@
 import { IconButton, TextField, Stack, styled } from "@mui/material";
 import { FC, useState, FocusEvent, useRef } from "react";
 import CheckIcon from "@mui/icons-material/Check";
+import { AddNewMemberSecondaryProps } from "./pagefunctions";
 
 interface MemberRowProps {
-  onAdd: (memberName: string) => void;
+  onAdd: ({ memberName }: AddNewMemberSecondaryProps) => void;
 }
 
 const AddMemberRow: FC<MemberRowProps> = ({ onAdd }) => {
@@ -20,13 +21,18 @@ const AddMemberRow: FC<MemberRowProps> = ({ onAdd }) => {
   };
 
   const handleAddMember = () => {
-    onAdd(tempMember);
+    onAdd({ memberName: tempMember });
     resetTempMember();
   };
   return (
     <Stack gap={2} direction="row" alignItems="center">
       <StyledInput
         ref={ref}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            handleAddMember();
+          }
+        }}
         className="dropshadow"
         value={tempMember}
         onChange={(e) => setTempMember(e.target.value)}

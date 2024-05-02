@@ -7,57 +7,31 @@ import { DragDropContext } from "react-beautiful-dnd";
 import ColumnCardContainer from "@/components/ColumnCardContainer";
 import ContainerColumn from "@/components/ContainerColumn";
 import ContentRenderer from "./ContentRenderer";
-import MarginWrapper from "@/components/MarginWrapper";
 import MemberRenderer from "./MemberRenderer";
 import {
-  addNewMember,
+  addMember,
   removeMember,
   updateMemberName,
   addBlankMemberSpending,
+  useNumberBank,
+  useUniqueSpendingIdBank,
 } from "./pagefunctions";
+import { ManageViewState } from "./types";
 
-interface ManageProps {
-  // Add any props you need for the Manage component
-}
-
-const initialDataTemplate = {
-  spendings: [],
+const initialState: ManageViewState = {
+  members: [],
+  spendings: {},
+  spendingColumn: {},
 };
 
-interface SharedByTemplate {
-  name: string;
-  id: number;
-}
+const Manage: React.FC = () => {
+  const [manageViewState, setManageViewState] =
+    useState<ManageViewState>(initialState);
 
-export interface SpendingDataTemplate {
-  expenseName?: string;
-  amount?: number;
-  sharedBy?: SharedByTemplate[];
-  id: string;
-}
+  const { takeNumber } = useNumberBank();
+  const { takeSpendingId } = useUniqueSpendingIdBank();
 
-export interface NewColumnDataTemplate {
-  [key: string]: {
-    spendings: SpendingDataTemplate[];
-  };
-}
-
-const blankSpendingObject: SpendingDataTemplate = {
-  expenseName: "",
-  amount: 0,
-  sharedBy: [],
-  id: `tempSpendingId=${Math.random()}`,
-};
-
-const Manage: React.FC<ManageProps> = () => {
-  // Add your component logic here
-
-  const [members, setMembers] = useState<NewColumnDataTemplate>({});
-  const memberNames = Object.keys(members);
-
-  const handleDragEnd = (result: any) => {
-    // TODO: Implement logic for handling drag end
-  };
+  const onDragEnd = (result: any) => {};
 
   return (
     <Stack sx={{ height: "100%" }} direction="row" gap={4}>
@@ -66,24 +40,42 @@ const Manage: React.FC<ManageProps> = () => {
           Members
         </StyledHeader>
         <MemberRenderer
-          memberNames={memberNames}
-          removeMember={removeMember({ setMembers, members })}
-          updateMemberName={updateMemberName({ setMembers, members })}
+          members={manageViewState.members}
+          removeMember={removeMember({ setManageViewState, manageViewState })}
+          updateMemberName={updateMemberName({
+            setManageViewState,
+            manageViewState,
+          })}
         />
         <Divider orientation="horizontal" flexItem sx={{ marginY: 4 }} />
         <StyledHeader variant="h4" sx={{ mb: 2 }}>
           Add Member
         </StyledHeader>
         <ContainerColumn>
-          <AddMemberRow onAdd={addNewMember({ members, setMembers })} />
+          <AddMemberRow
+            onAdd={addMember({
+              manageViewState,
+              setManageViewState,
+              takeNumber,
+            })}
+          />
         </ContainerColumn>
       </ColumnCardContainer>
       <Divider orientation="vertical" flexItem />
-      <DragDropContext onDragEnd={handleDragEnd}>
+      <DragDropContext
+        onDragEnd={onDragEnd}
+        onDragUpdate={() => {}}
+        onDragStart={() => {}}
+      >
         <ContentRenderer
-          members={members}
-          memberNames={memberNames}
-          addBlankMemberSpending={addBlankMemberSpending(setMembers, members)}
+          members={manageViewState.members}
+          spendingColumns={manageViewState.spendingColumn}
+          spendings={manageViewState.spendings}
+          addBlankMemberSpending={addBlankMemberSpending({
+            manageViewState,
+            setManageViewState,
+            takeSpendingId,
+          })}
         />
       </DragDropContext>
     </Stack>

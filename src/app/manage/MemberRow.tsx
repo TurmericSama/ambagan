@@ -1,34 +1,39 @@
 import { Typography, IconButton, TextField, Stack, Card } from "@mui/material";
-import { Box } from "@mui/system";
 import { FC, useState } from "react";
 import ClearIcon from "@mui/icons-material/Clear";
-
-interface UpdateMemberNameProps {
-  oldMemberName: string;
-  newMemberName: string;
-}
+import { UpdateMemberNameSecondaryProps } from "./pagefunctions";
+import { Member } from "./types";
 
 interface MemberRowProps {
-  memberName: string;
-  onRemove: (memberName: string) => void;
-  onBlur: ({ oldMemberName, newMemberName }: UpdateMemberNameProps) => void;
+  member: Member;
+  onRemove: (memberId: string) => void;
+  onBlur: ({
+    oldMemberObject,
+    newMemberObject,
+  }: UpdateMemberNameSecondaryProps) => void;
 }
 
-const MemberRow: FC<MemberRowProps> = ({ memberName, onRemove, onBlur }) => {
+const MemberRow: FC<MemberRowProps> = ({ member, onRemove, onBlur }) => {
   const [isEditing, setIssEditing] = useState<boolean>(false);
-  const [tempMember, setTempMember] = useState<string>(memberName);
+  const [tempMember, setTempMember] = useState<Member>(member);
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    onBlur({ oldMemberName: memberName, newMemberName: e.target.value });
+    onBlur({
+      oldMemberObject: member,
+      newMemberObject: {
+        memberId: member.memberId,
+        memberName: e.target.value,
+      },
+    });
     setIssEditing(false);
   };
 
   const handleRemove = () => {
-    onRemove(memberName);
+    onRemove(member.memberId);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTempMember(e.target.value);
+    setTempMember({ ...member, memberId: e.target.value });
   };
 
   return (
@@ -44,7 +49,7 @@ const MemberRow: FC<MemberRowProps> = ({ memberName, onRemove, onBlur }) => {
       {isEditing ? (
         <Stack direction="row" gap={2} alignItems="center">
           <TextField
-            value={tempMember}
+            value={tempMember.memberName}
             onChange={handleChange}
             onBlur={handleBlur}
             autoFocus
@@ -64,7 +69,7 @@ const MemberRow: FC<MemberRowProps> = ({ memberName, onRemove, onBlur }) => {
           className="dropshadow"
         >
           <Typography fontWeight="bold" variant="h5">
-            {memberName}
+            {member.memberName}
           </Typography>
         </Card>
       )}

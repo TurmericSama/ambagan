@@ -1,104 +1,241 @@
-import { NewColumnDataTemplate, SpendingDataTemplate } from "./page";
-
-interface AddNewMemberPrimaryProps {
-  setMembers: (members: NewColumnDataTemplate) => void;
-  members: NewColumnDataTemplate;
-}
-
-export const addNewMember =
-  ({ members, setMembers }: AddNewMemberPrimaryProps) =>
-  (memberName: string): void => {
-    setMembers({
-      ...members,
-      [memberName]: {
-        spendings: [],
-      },
-    });
-  };
-
-interface RemoveMemberProps {
-  setMembers: (members: NewColumnDataTemplate) => void;
-  members: NewColumnDataTemplate;
-}
-
-export const removeMember = ({
-  setMembers,
-  members,
-}: RemoveMemberProps): ((memberName: string) => void) => {
-  return (memberName: string): void => {
-    const { [memberName]: _, ...rest } = members;
-    setMembers(rest);
-  };
-};
+import { useState, useEffect } from "react";
+import { ManageViewState, Member, SharedByTemplate } from "./types";
 
 interface UpdateMemberNameInitialProps {
-  setMembers: (members: NewColumnDataTemplate) => void;
-  members: NewColumnDataTemplate;
+  setManageViewState: (manageViewState: ManageViewState) => void;
+  manageViewState: ManageViewState;
 }
 
-interface UpdateMemberNameSecondaryProps {
-  oldMemberName: string;
-  newMemberName: string;
+export interface UpdateMemberNameSecondaryProps {
+  oldMemberObject: Member;
+  newMemberObject: Member;
 }
 
 export const updateMemberName =
-  ({ setMembers, members }: UpdateMemberNameInitialProps) =>
-  ({ oldMemberName, newMemberName }: UpdateMemberNameSecondaryProps): void => {
-    const {
-      [oldMemberName]: { ...currentMemberProps },
-      ...rest
-    } = members;
+  ({
+    setManageViewState: setMembers,
+    manageViewState,
+  }: UpdateMemberNameInitialProps) =>
+  ({
+    oldMemberObject,
+    newMemberObject,
+  }: UpdateMemberNameSecondaryProps): void => {
     setMembers({
-      ...rest,
-      [newMemberName]: currentMemberProps,
+      ...manageViewState,
+      members: manageViewState.members.map((member) =>
+        member.memberId === oldMemberObject.memberId
+          ? { ...member, memberName: newMemberObject.memberName }
+          : member
+      ),
     });
   };
 
-const blankSpendingObject: SpendingDataTemplate = {
-  expenseName: "",
-  amount: 0,
-  sharedBy: [],
-  id: `tempSpendingId=${Math.random()}`,
-};
-
-interface UpdateMemberSpendingPrimaryProps {
-  setMembers: (members: NewColumnDataTemplate) => void;
-  members: NewColumnDataTemplate;
+interface UpdateMemberPrimaryProps {
+  setManageViewState: (manageViewState: ManageViewState) => void;
+  currentViewState: ManageViewState;
 }
 
-interface UpdateMemberSpendingSecondaryProps {
-  memberName: string;
-  id: string;
-  newSpendingData: SpendingDataTemplate;
+interface SpendingPayload {
+  expenseName?: string;
+  amount?: number;
+  sharedBy?: SharedByTemplate[];
+}
+
+export interface UpdateMemberSecondaryProps {
+  spendingId: string;
+  spendingPayload: SpendingPayload;
 }
 
 export const updateMemberSpending =
-  ({ setMembers, members }: UpdateMemberSpendingPrimaryProps) =>
-  ({ memberName, id, newSpendingData }: UpdateMemberSpendingSecondaryProps) => {
-    const {
-      [memberName]: { ...memberToUpdate },
-      ...restMembers
-    } = members;
-    const spendingIndex = memberToUpdate.spendings.findIndex(
-      (spending) => spending.id === id
-    );
-    memberToUpdate.spendings[spendingIndex] = newSpendingData;
-    setMembers({
-      ...restMembers,
-      [memberName]: memberToUpdate,
+  ({ setManageViewState, currentViewState }: UpdateMemberPrimaryProps) =>
+  ({ spendingId, spendingPayload }: UpdateMemberSecondaryProps) => {
+    const updatedSpendings = {
+      ...currentViewState.spendings,
+      [spendingId]: {
+        ...currentViewState.spendings[spendingId],
+        ...spendingPayload,
+      },
+    };
+    setManageViewState({
+      ...currentViewState,
+      spendings: updatedSpendings,
     });
   };
 
+export const useUniqueSpendingIdBank = (): {
+  takenSpendingIds: number[];
+  availableSpendingIds: number[];
+  takeSpendingId: () => string;
+  releaseSpendingId: (number: number) => void;
+} => {
+  const [takenNumbers, setTakenNumbers] = useState<number[]>([]);
+  const [availableNumbers, setAvailableNumbers] = useState<number[]>([]);
+
+  useEffect(() => {
+    const bank: number[] = [];
+    for (let i = 1000; i < 2000; i++) {
+      bank.push(i);
+    }
+    setAvailableNumbers(bank);
+  }, []);
+
+  const takeNumber = (): string => {
+    if (availableNumbers.length > 0) {
+      const [number, ...rest] = availableNumbers;
+      setTakenNumbers([...takenNumbers, number]);
+      setAvailableNumbers(rest);
+      return String(number);
+    }
+
+    return "No numbers available";
+  };
+
+  const releaseNumber = (number: number): void => {
+    const updatedTakenNumbers = takenNumbers.filter((n) => n !== number);
+    setTakenNumbers(updatedTakenNumbers);
+    setAvailableNumbers([number, ...availableNumbers]);
+  };
+
+  return {
+    takenSpendingIds: takenNumbers,
+    availableSpendingIds: availableNumbers,
+    takeSpendingId: takeNumber,
+    releaseSpendingId: releaseNumber,
+  };
+};
+
+export interface AddNewMemberSpendingPrimaryProps {
+  setManageViewState: (manageViewState: ManageViewState) => void;
+  manageViewState: ManageViewState;
+  takeSpendingId: () => string;
+}
+
+export interface AddNewMemberSpendingSecondaryProps {
+  memberId: string;
+  memberName: string;
+}
+
 export const addBlankMemberSpending =
-  (
-    setMembers: (members: NewColumnDataTemplate) => void,
-    members: NewColumnDataTemplate
-  ) =>
-  (memberName: string): void => {
-    setMembers({
-      ...members,
-      [memberName]: {
-        spendings: [...members[memberName].spendings, blankSpendingObject],
+  ({
+    manageViewState,
+    takeSpendingId,
+    setManageViewState,
+  }: AddNewMemberSpendingPrimaryProps) =>
+  ({ memberId, memberName }: AddNewMemberSpendingSecondaryProps) => {
+    const newSpendingId = takeSpendingId();
+    const setManagePayload: ManageViewState = {
+      ...manageViewState,
+      spendings: {
+        ...manageViewState.spendings,
+        [newSpendingId]: {
+          expenseName: "",
+          amount: 0.0,
+          sharedBy: [],
+          spendingId: newSpendingId,
+          memberId,
+        },
+      },
+      spendingColumn: {
+        ...manageViewState.spendingColumn,
+        [memberId]: {
+          memberId,
+          memberName,
+          spendingKeys: [
+            ...manageViewState.spendingColumn[memberId]?.spendingKeys,
+            newSpendingId,
+          ],
+        },
+      },
+    };
+    setManageViewState(setManagePayload);
+  };
+
+interface OnRemoveMemberPrimaryProps {
+  manageViewState: ManageViewState;
+  setManageViewState: (manageViewState: ManageViewState) => void;
+}
+
+export const removeMember =
+  ({ manageViewState, setManageViewState }: OnRemoveMemberPrimaryProps) =>
+  (memberToRemoveId: string) => {
+    setManageViewState({
+      ...manageViewState,
+      members: manageViewState.members.filter(
+        (member) => member.memberId !== memberToRemoveId
+      ),
+    });
+  };
+
+export const useNumberBank = (): {
+  takenNumbers: number[];
+  availableNumbers: number[];
+  takeNumber: () => string;
+  releaseNumber: (number: number) => void;
+} => {
+  const [takenNumbers, setTakenNumbers] = useState<number[]>([]);
+  const [availableNumbers, setAvailableNumbers] = useState<number[]>([]);
+
+  useEffect(() => {
+    const bank: number[] = [];
+    for (let i = 1000; i < 1100; i++) {
+      bank.push(i);
+    }
+    setAvailableNumbers(bank);
+  }, []);
+
+  const takeNumber = (): string => {
+    if (availableNumbers.length > 0) {
+      const [number, ...rest] = availableNumbers;
+      setTakenNumbers([...takenNumbers, number]);
+      setAvailableNumbers(rest);
+      return String(number);
+    }
+
+    return "No numbers available";
+  };
+
+  const releaseNumber = (number: number): void => {
+    const updatedTakenNumbers = takenNumbers.filter((n) => n !== number);
+    setTakenNumbers(updatedTakenNumbers);
+    setAvailableNumbers([number, ...availableNumbers]);
+  };
+
+  return {
+    takenNumbers,
+    availableNumbers,
+    takeNumber,
+    releaseNumber,
+  };
+};
+
+export interface AddNewMemberPrimaryProps {
+  manageViewState: ManageViewState;
+  setManageViewState: (manageViewState: ManageViewState) => void;
+  takeNumber: () => string;
+}
+
+export interface AddNewMemberSecondaryProps {
+  memberName: string;
+}
+
+export const addMember =
+  ({
+    manageViewState,
+    setManageViewState,
+    takeNumber,
+  }: AddNewMemberPrimaryProps) =>
+  ({ memberName }: AddNewMemberSecondaryProps) => {
+    const memberId = takeNumber();
+    setManageViewState({
+      ...manageViewState,
+      members: [...manageViewState.members, { memberId, memberName }],
+      spendingColumn: {
+        ...manageViewState.spendingColumn,
+        [memberId]: {
+          memberId,
+          memberName,
+          spendingKeys: [],
+        },
       },
     });
   };

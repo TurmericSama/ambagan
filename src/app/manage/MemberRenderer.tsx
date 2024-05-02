@@ -2,23 +2,20 @@ import React, { FC } from "react";
 import ContainerColumn from "../../components/ContainerColumn";
 import MemberRow from "./MemberRow";
 import { Typography } from "@mui/material";
-
-interface UpdateMemberNameProps {
-  oldMemberName: string;
-  newMemberName: string;
-}
+import { Member } from "./types";
+import { UpdateMemberNameSecondaryProps } from "./pagefunctions";
 
 interface MemberRendererProps {
-  memberNames: string[];
-  removeMember: (memberName: string) => void;
+  members: Member[];
+  removeMember: (memberId: string) => void;
   updateMemberName: ({
-    oldMemberName,
-    newMemberName,
-  }: UpdateMemberNameProps) => void;
+    oldMemberObject,
+    newMemberObject,
+  }: UpdateMemberNameSecondaryProps) => void;
 }
 
 const MemberRenderer: FC<MemberRendererProps> = ({
-  memberNames,
+  members,
   removeMember,
   updateMemberName,
 }) => {
@@ -31,15 +28,15 @@ const MemberRenderer: FC<MemberRendererProps> = ({
         overflow: "auto",
       }}
     >
-      {memberNames.map((memberName, index) => (
+      {members.map((member, index) => (
         <MemberRow
           key={index}
-          memberName={memberName}
           onRemove={removeMember}
           onBlur={updateMemberName}
+          member={member}
         />
       ))}
-      {!memberNames.length && <Typography>No members added yet</Typography>}
+      {!members.length && <Typography>No members added yet</Typography>}
     </ContainerColumn>
   );
 };

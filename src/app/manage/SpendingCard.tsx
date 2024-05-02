@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { Draggable } from "react-beautiful-dnd";
-import { SpendingDataTemplate } from "./page";
 import { Card, Typography } from "@mui/material";
+import { SpendingDataTemplate } from "./types";
 
 interface SpendingCardProps {
   spending: SpendingDataTemplate;
@@ -11,7 +11,7 @@ interface SpendingCardProps {
 
 const SpendingCard: FC<SpendingCardProps> = ({ spending, index, key }) => {
   return (
-    <Draggable draggableId={spending.id} index={index} key={key}>
+    <Draggable draggableId={spending.spendingId} index={index} key={key}>
       {(provided, snapshot) => (
         <Card
           elevation={2}
@@ -30,7 +30,7 @@ const SpendingCard: FC<SpendingCardProps> = ({ spending, index, key }) => {
           <Typography variant="h4" fontWeight="bold">
             {spending?.expenseName?.length
               ? spending?.expenseName
-              : "Spending Title"}
+              : "New Spending"}
           </Typography>
           <Typography
             variant="h6"
