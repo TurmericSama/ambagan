@@ -33,7 +33,7 @@ const MemberRow: FC<MemberRowProps> = ({ member, onRemove, onBlur }) => {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTempMember({ ...member, memberId: e.target.value });
+    setTempMember({ ...member, memberName: e.target.value });
   };
 
   return (
