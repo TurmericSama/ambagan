@@ -1,5 +1,12 @@
 "use client";
-import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
+import {
+  AppBar,
+  Box,
+  Button,
+  Toolbar,
+  Typography,
+  Drawer,
+} from "@mui/material";
 import Link from "next/link";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { FC } from "react";
@@ -23,7 +30,14 @@ const ThemeContainer: FC<{ children: React.ReactNode }> = ({ children }) => {
 
   return (
     <ThemeProvider theme={theme}>
-      <AppBar position="static" sx={{ backgroundColor: "#D9DDFF" }}>
+      <AppBar
+        position="fixed"
+        sx={{
+          backgroundColor: "#D9DDFF",
+          width: "100%",
+          top: 0,
+        }}
+      >
         <Toolbar variant="dense">
           <Typography
             variant="h6"
@@ -47,9 +61,8 @@ const ThemeContainer: FC<{ children: React.ReactNode }> = ({ children }) => {
           </Box>
         </Toolbar>
       </AppBar>
-      <Box sx={{ p: 2, height: `calc(100% - ${headerHeight})` }}>
-        {children}
-      </Box>
+      <Toolbar variant="dense" />
+      <Box sx={{ p: `0 2 2 2`, height: "100%" }}>{children}</Box>
     </ThemeProvider>
   );
 };

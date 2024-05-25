@@ -1,16 +1,12 @@
 import { IconButton, TextField, Stack, styled } from "@mui/material";
 import { FC, useState, FocusEvent, useRef } from "react";
 import CheckIcon from "@mui/icons-material/Check";
-import { AddNewMemberSecondaryProps } from "./pagefunctions";
-
-interface MemberRowProps {
-  onAdd: ({ memberName }: AddNewMemberSecondaryProps) => void;
-}
+import { MemberRowProps } from "./types";
 
 const AddMemberRow: FC<MemberRowProps> = ({ onAdd }) => {
   const [tempMember, setTempMember] = useState<string>("");
   const [blur, setBlur] = useState<boolean>(false);
-  const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
+  const handleBlur = () => {
     setBlur(true);
   };
 
@@ -29,7 +25,7 @@ const AddMemberRow: FC<MemberRowProps> = ({ onAdd }) => {
       <StyledInput
         ref={ref}
         onKeyDown={(e) => {
-          if (e.key === "Enter") {
+          if (e.key === "Enter" && tempMember.trim() !== "") {
             handleAddMember();
           }
         }}

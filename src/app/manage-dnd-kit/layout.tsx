@@ -5,14 +5,13 @@ interface ManageViewLayoutProps {
   children: ReactNode;
 }
 
-const ManageViewLayout: FC<ManageViewLayoutProps> = ({ children }) => {
+const DndViewLayout: FC<ManageViewLayoutProps> = ({ children }) => {
   return (
     <Container
       sx={{
         height: "100%",
-        pt: 10,
         width: "100%",
-        zIndex: 1,
+        backgroundColor: "red",
       }}
       maxWidth="xl"
     >
@@ -21,4 +20,4 @@ const ManageViewLayout: FC<ManageViewLayoutProps> = ({ children }) => {
   );
 };
 
-export default ManageViewLayout;
+export default DndViewLayout;

@@ -1,18 +1,8 @@
 import React, { FC } from "react";
-import ContainerColumn from "../../components/ContainerColumn";
-import MemberRow from "./MemberRow";
+import ContainerColumn from "../../../components/ContainerColumn";
+import MemberRow from "../MemberRow/MemberRow";
 import { Typography } from "@mui/material";
-import { Member } from "./types";
-import { UpdateMemberNameSecondaryProps } from "./pagefunctions";
-
-interface MemberRendererProps {
-  members: Member[];
-  removeMember: (memberId: string) => void;
-  updateMemberName: ({
-    oldMemberObject,
-    newMemberObject,
-  }: UpdateMemberNameSecondaryProps) => void;
-}
+import { MemberRendererProps } from "./types";
 
 const MemberRenderer: FC<MemberRendererProps> = ({
   members,

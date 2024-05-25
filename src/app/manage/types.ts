@@ -1,3 +1,5 @@
+import { UpdateMemberSpendingsSecondaryProps } from "./pageFunctions/types";
+
 export interface SharedByTemplate {
   name: string;
   id: number;
@@ -33,3 +35,8 @@ export interface Member {
   memberId: string;
   memberName: string;
 }
+
+export type UpdateMemberSpendingTypeSignature = ({
+  spendingId,
+  spendingPayload,
+}: UpdateMemberSpendingsSecondaryProps) => void;

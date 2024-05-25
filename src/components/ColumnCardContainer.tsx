@@ -1,14 +1,5 @@
 import React, { FC } from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardActions,
-  styled,
-  Stack,
-  CardProps,
-} from "@mui/material";
-import Headers from "../components/StyledHeader";
+import { Card, styled, CardProps } from "@mui/material";
 interface ColumnCardContainerProps extends CardProps {
   children: React.ReactNode;
 }
@@ -33,7 +24,6 @@ const StyledCardComponent = styled(Card)(({ theme }) => ({
   height: "100%",
   minWidth: 400,
   maxWidth: 400,
-  overflow: "auto",
   flex: 1,
   display: "flex",
   flexDirection: "column",

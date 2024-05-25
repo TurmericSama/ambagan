@@ -1,8 +1,8 @@
 import { Typography, IconButton, TextField, Stack, Card } from "@mui/material";
 import { FC, useState } from "react";
 import ClearIcon from "@mui/icons-material/Clear";
-import { UpdateMemberNameSecondaryProps } from "./pagefunctions";
-import { Member } from "./types";
+import { UpdateMemberNameSecondaryProps } from "../pageFunctions/types";
+import { Member } from "../types";
 
 interface MemberRowProps {
   member: Member;
@@ -68,7 +68,11 @@ const MemberRow: FC<MemberRowProps> = ({ member, onRemove, onBlur }) => {
           }}
           className="dropshadow"
         >
-          <Typography fontWeight="bold" variant="h5">
+          <Typography
+            fontWeight="bold"
+            variant="h5"
+            sx={{ textTransform: "capitalize" }}
+          >
             {member.memberName}
           </Typography>
         </Card>

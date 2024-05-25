@@ -1,15 +1,18 @@
 import { useState, useEffect } from "react";
-import { ManageViewState, Member, SharedByTemplate } from "./types";
-
-interface UpdateMemberNameInitialProps {
-  setManageViewState: (manageViewState: ManageViewState) => void;
-  manageViewState: ManageViewState;
-}
-
-export interface UpdateMemberNameSecondaryProps {
-  oldMemberObject: Member;
-  newMemberObject: Member;
-}
+import { ManageViewState, Member, SharedByTemplate } from "../types";
+import { OnDragEndResponder } from "react-beautiful-dnd";
+import {
+  UpdateMemberNameInitialProps,
+  UpdateMemberNameSecondaryProps,
+  UpdateMemberPrimaryProps,
+  UpdateMemberSpendingsSecondaryProps,
+  AddNewMemberSpendingPrimaryProps,
+  AddNewMemberSpendingSecondaryProps,
+  OnRemoveMemberPrimaryProps,
+  AddNewMemberPrimaryProps,
+  AddNewMemberSecondaryProps,
+  OnDragEndPrimaryProps,
+} from "./types";
 
 export const updateMemberName =
   ({
@@ -30,34 +33,17 @@ export const updateMemberName =
     });
   };
 
-interface UpdateMemberPrimaryProps {
-  setManageViewState: (manageViewState: ManageViewState) => void;
-  currentViewState: ManageViewState;
-}
-
-interface SpendingPayload {
-  expenseName?: string;
-  amount?: number;
-  sharedBy?: SharedByTemplate[];
-}
-
-export interface UpdateMemberSecondaryProps {
-  spendingId: string;
-  spendingPayload: SpendingPayload;
-}
-
 export const updateMemberSpending =
-  ({ setManageViewState, currentViewState }: UpdateMemberPrimaryProps) =>
-  ({ spendingId, spendingPayload }: UpdateMemberSecondaryProps) => {
+  ({ setManageViewState, manageViewState }: UpdateMemberPrimaryProps) =>
+  ({ spendingId, spendingPayload }: UpdateMemberSpendingsSecondaryProps) => {
     const updatedSpendings = {
-      ...currentViewState.spendings,
+      ...manageViewState.spendings,
       [spendingId]: {
-        ...currentViewState.spendings[spendingId],
         ...spendingPayload,
       },
     };
     setManageViewState({
-      ...currentViewState,
+      ...manageViewState,
       spendings: updatedSpendings,
     });
   };
@@ -104,17 +90,6 @@ export const useUniqueSpendingIdBank = (): {
   };
 };
 
-export interface AddNewMemberSpendingPrimaryProps {
-  setManageViewState: (manageViewState: ManageViewState) => void;
-  manageViewState: ManageViewState;
-  takeSpendingId: () => string;
-}
-
-export interface AddNewMemberSpendingSecondaryProps {
-  memberId: string;
-  memberName: string;
-}
-
 export const addBlankMemberSpending =
   ({
     manageViewState,
@@ -149,11 +124,6 @@ export const addBlankMemberSpending =
     };
     setManageViewState(setManagePayload);
   };
-
-interface OnRemoveMemberPrimaryProps {
-  manageViewState: ManageViewState;
-  setManageViewState: (manageViewState: ManageViewState) => void;
-}
 
 export const removeMember =
   ({ manageViewState, setManageViewState }: OnRemoveMemberPrimaryProps) =>
@@ -208,16 +178,6 @@ export const useNumberBank = (): {
   };
 };
 
-export interface AddNewMemberPrimaryProps {
-  manageViewState: ManageViewState;
-  setManageViewState: (manageViewState: ManageViewState) => void;
-  takeNumber: () => string;
-}
-
-export interface AddNewMemberSecondaryProps {
-  memberName: string;
-}
-
 export const addMember =
   ({
     manageViewState,
@@ -226,7 +186,7 @@ export const addMember =
   }: AddNewMemberPrimaryProps) =>
   ({ memberName }: AddNewMemberSecondaryProps) => {
     const memberId = takeNumber();
-    setManageViewState({
+    const payload = {
       ...manageViewState,
       members: [...manageViewState.members, { memberId, memberName }],
       spendingColumn: {
@@ -236,6 +196,76 @@ export const addMember =
           memberName,
           spendingKeys: [],
         },
+      },
+    };
+    setManageViewState(payload);
+  };
+
+export const onDragEnd =
+  ({
+    setManageViewState,
+    manageViewState,
+  }: OnDragEndPrimaryProps): OnDragEndResponder =>
+  ({ destination, source, draggableId }) => {
+    if (!destination) return;
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    )
+      return;
+    const sourceSpendingColumn =
+      manageViewState.spendingColumn[source.droppableId];
+    const destinationSpendingColumn =
+      manageViewState.spendingColumn[destination.droppableId];
+
+    //section for when the source and destination are the same
+    if (sourceSpendingColumn === destinationSpendingColumn) {
+      const spendingKeysCopy = Array.from(sourceSpendingColumn.spendingKeys);
+      spendingKeysCopy.splice(source.index, 1);
+      spendingKeysCopy.splice(destination.index, 0, draggableId);
+      const newSpendingColumn = {
+        ...sourceSpendingColumn,
+        spendingKeys: spendingKeysCopy,
+      };
+      setManageViewState({
+        ...manageViewState,
+        spendingColumn: {
+          ...manageViewState.spendingColumn,
+          [newSpendingColumn.memberId]: newSpendingColumn,
+        },
+      });
+      return;
+    }
+
+    //section for when the source and destination are different
+
+    const sourceSpendingKeysCopy = Array.from(
+      sourceSpendingColumn.spendingKeys
+    );
+    sourceSpendingKeysCopy.splice(source.index, 1);
+    //remove the spendingId from the source spending column
+    const destinationSpendingKeysCopy = Array.from(
+      destinationSpendingColumn.spendingKeys
+    );
+    //creaste a copy of the destination spending keys
+    destinationSpendingKeysCopy.splice(destination.index, 0, draggableId);
+    //insert the spendingId to the destination spending keys
+    const newSourceSpendingColumn = {
+      ...sourceSpendingColumn,
+      spendingKeys: sourceSpendingKeysCopy,
+    };
+
+    const newDestinationSpendingColumn = {
+      ...destinationSpendingColumn,
+      spendingKeys: destinationSpendingKeysCopy,
+    };
+
+    setManageViewState({
+      ...manageViewState,
+      spendingColumn: {
+        ...manageViewState.spendingColumn,
+        [source.droppableId]: newSourceSpendingColumn,
+        [destination.droppableId]: newDestinationSpendingColumn,
       },
     });
   };
