@@ -3,7 +3,7 @@
 import ColumnCardContainer from "@/components/ColumnCardContainer";
 import { Box, Button, Stack } from "@mui/material";
 import { FC } from "react";
-import { Droppable } from "react-beautiful-dnd";
+import { Droppable } from "@hello-pangea/dnd";
 import Headers from "../../../components/StyledHeader";
 import SpendingCard from "../SpendingCard/SpendingCard";
 import { ContentRendererProps } from "./types";
@@ -19,7 +19,7 @@ const ContentRenderer: FC<ContentRendererProps> = ({
     <>
       {members.map(({ memberName, memberId }, index) => {
         const spendingColumn = spendingColumns[memberId];
-        const spendingKeys = spendingColumn?.spendingKeys ?? [];
+        const spendingKeys = spendingColumn?.spendingIds ?? [];
         return (
           <ColumnCardContainer
             sx={{ paddingTop: 4, padding: 3 }}
@@ -33,7 +33,6 @@ const ContentRenderer: FC<ContentRendererProps> = ({
               type="virtual"
               getContainerForClone={() => {
                 const scrollParent = document.getElementById("scroll-parent")!;
-                console.log({ scrollParent });
                 return scrollParent;
               }}
             >

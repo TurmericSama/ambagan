@@ -10,8 +10,7 @@ import {
 import Link from "next/link";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { FC } from "react";
-
-const headerHeight = "50px";
+import "../components/font.css";
 
 const ThemeContainer: FC<{ children: React.ReactNode }> = ({ children }) => {
   const theme = createTheme({
@@ -58,11 +57,19 @@ const ThemeContainer: FC<{ children: React.ReactNode }> = ({ children }) => {
             >
               Manage
             </Button>
+            <Button
+              variant="text"
+              LinkComponent={Link}
+              href="dndkit"
+              sx={{ fontWeight: "bold" }}
+            >
+              DND kit
+            </Button>
           </Box>
         </Toolbar>
       </AppBar>
       <Toolbar variant="dense" />
-      <Box sx={{ p: `0 2 2 2`, height: "100%" }}>{children}</Box>
+      {children}
     </ThemeProvider>
   );
 };

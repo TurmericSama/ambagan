@@ -115,8 +115,8 @@ export const addBlankMemberSpending =
         [memberId]: {
           memberId,
           memberName,
-          spendingKeys: [
-            ...manageViewState.spendingColumn[memberId]?.spendingKeys,
+          spendingIds: [
+            ...manageViewState.spendingColumn[memberId]?.spendingIds,
             newSpendingId,
           ],
         },
@@ -194,7 +194,7 @@ export const addMember =
         [memberId]: {
           memberId,
           memberName,
-          spendingKeys: [],
+          spendingIds: [],
         },
       },
     };
@@ -220,7 +220,7 @@ export const onDragEnd =
 
     //section for when the source and destination are the same
     if (sourceSpendingColumn === destinationSpendingColumn) {
-      const spendingKeysCopy = Array.from(sourceSpendingColumn.spendingKeys);
+      const spendingKeysCopy = Array.from(sourceSpendingColumn.spendingIds);
       spendingKeysCopy.splice(source.index, 1);
       spendingKeysCopy.splice(destination.index, 0, draggableId);
       const newSpendingColumn = {
@@ -239,13 +239,11 @@ export const onDragEnd =
 
     //section for when the source and destination are different
 
-    const sourceSpendingKeysCopy = Array.from(
-      sourceSpendingColumn.spendingKeys
-    );
+    const sourceSpendingKeysCopy = Array.from(sourceSpendingColumn.spendingIds);
     sourceSpendingKeysCopy.splice(source.index, 1);
     //remove the spendingId from the source spending column
     const destinationSpendingKeysCopy = Array.from(
-      destinationSpendingColumn.spendingKeys
+      destinationSpendingColumn.spendingIds
     );
     //creaste a copy of the destination spending keys
     destinationSpendingKeysCopy.splice(destination.index, 0, draggableId);

@@ -1,9 +1,9 @@
 "use client";
-import { Stack, Divider, Drawer, Toolbar } from "@mui/material";
-import React, { useState } from "react";
+import { Stack, Divider, Drawer, Toolbar, Box } from "@mui/material";
+import React, { useRef, useState } from "react";
 import AddMemberRow from "./AddMemberRow/AddMemberRow";
 import StyledHeader from "@/components/StyledHeader";
-import { DragDropContext } from "react-beautiful-dnd";
+import { DragDropContext } from "@hello-pangea/dnd";
 import ColumnCardContainer from "@/components/ColumnCardContainer";
 import ContainerColumn from "@/components/ContainerColumn";
 import ContentRenderer from "./ContentRenderer/ContentRenderer";
@@ -36,45 +36,49 @@ const Manage: React.FC = () => {
   console.log({ manageViewState });
 
   return (
-    <>
-      <Drawer
-        open
-        variant="permanent"
+    <Box
+      sx={{
+        height: "calc(100% - 50px)",
+        display: "grid",
+        gridTemplateColumns: "1fr 3fr",
+      }}
+    >
+      <ColumnCardContainer
         sx={{
-          "& .MuiDrawer-paper": {
-            zIndex: 2,
-          },
+          paddingTop: 4,
+          padding: 3,
+          flex: 1,
+          zIndex: 99999,
+          left: (theme) => theme.spacing(4),
+          height: "100%",
         }}
       >
-        <Toolbar sx={{ zIndex: 2 }} variant="dense" />
-        <ColumnCardContainer sx={{ paddingTop: 4, padding: 3 }}>
-          <StyledHeader variant="h4" mb={4}>
-            Members
-          </StyledHeader>
-          <MemberRenderer
-            members={manageViewState.members}
-            removeMember={removeMember({ setManageViewState, manageViewState })}
-            updateMemberName={updateMemberName({
-              setManageViewState,
+        <StyledHeader variant="h4" mb={4}>
+          Members
+        </StyledHeader>
+        <MemberRenderer
+          members={manageViewState.members}
+          removeMember={removeMember({ setManageViewState, manageViewState })}
+          updateMemberName={updateMemberName({
+            setManageViewState,
+            manageViewState,
+          })}
+        />
+        <Divider orientation="horizontal" flexItem sx={{ marginY: 4 }} />
+        <StyledHeader variant="h4" sx={{ mb: 2 }}>
+          Add Member
+        </StyledHeader>
+        <ContainerColumn>
+          <AddMemberRow
+            onAdd={addMember({
               manageViewState,
+              setManageViewState,
+              takeNumber,
             })}
           />
-          <Divider orientation="horizontal" flexItem sx={{ marginY: 4 }} />
-          <StyledHeader variant="h4" sx={{ mb: 2 }}>
-            Add Member
-          </StyledHeader>
-          <ContainerColumn>
-            <AddMemberRow
-              onAdd={addMember({
-                manageViewState,
-                setManageViewState,
-                takeNumber,
-              })}
-            />
-          </ContainerColumn>
-        </ColumnCardContainer>
-      </Drawer>
-      <Stack sx={{ height: "calc(100% - 100px)" }} direction="row" gap={4}>
+        </ContainerColumn>
+      </ColumnCardContainer>
+      <Stack direction="row" gap={4} flex={1} sx={{ overflow: "auto" }}>
         <DragDropContext
           onDragEnd={onDragEnd({ manageViewState, setManageViewState })}
           onDragUpdate={() => {}}
@@ -96,7 +100,7 @@ const Manage: React.FC = () => {
           />
         </DragDropContext>
       </Stack>
-    </>
+    </Box>
   );
 };
 

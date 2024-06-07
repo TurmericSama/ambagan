@@ -1,3 +1,4 @@
+import { PaperProps } from "@mui/material";
 import { UpdateMemberSpendingsSecondaryProps } from "./pageFunctions/types";
 
 export interface SharedByTemplate {
@@ -21,14 +22,29 @@ export interface SpendingColumn {
   [memberId: string]: {
     memberId: string;
     memberName: string;
-    spendingKeys: string[];
+    spendingIds: string[];
   };
+}
+
+export interface DroppableProps extends PaperProps {
+  id: string;
+  spendings: Record<string, SpendingDataTemplate>;
+  spendingIds: string[];
+  columnName: string;
+}
+
+export interface SpendingCardProps {
+  id: string;
+  spending: SpendingDataTemplate;
+  columnName: string;
 }
 
 export interface ManageViewState {
   members: Member[]; // member names represent the column order and current columns available
   spendings: Spendings; // spendings are all of the spendings of all the members, keyed by a spendingId
   spendingColumn: SpendingColumn; // spending column is the list of spendings of each member, keyed by memberId
+  currentDraggingSpending: SpendingCardProps | null;
+  currentDraggingColumn: DroppableProps | null;
 }
 
 export interface Member {

@@ -11,14 +11,17 @@ const StackingContainer = styled(Stack)(({ theme }) => ({
 }));
 
 const StyledAvatar = styled(Avatar)(({ theme }) => ({
-  height: "30px",
-  width: "30px",
+  height: "18px",
+  width: "18px",
+  fontSize: "0.7rem",
 }));
 
 const AvatarStack: FC = () => {
   return (
-    <StackingContainer spacing={-1} direction="row" flex={1}>
+    <StackingContainer spacing={-0.5} direction="row" flex={1}>
       <StyledAvatar>A</StyledAvatar>
+      <StyledAvatar>B</StyledAvatar>
+      <StyledAvatar>C</StyledAvatar>
     </StackingContainer>
   );
 };
