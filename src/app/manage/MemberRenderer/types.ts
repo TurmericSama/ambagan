@@ -1,5 +1,5 @@
 import { UpdateMemberNameSecondaryProps } from "../pageFunctions/types";
-import { Member } from "../types";
+import { Member } from "../../dndkit/types";
 
 type UpdateMemberTypeSignature = ({}: UpdateMemberNameSecondaryProps) => void;
 

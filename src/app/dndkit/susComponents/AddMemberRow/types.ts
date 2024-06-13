@@ -1,4 +1,4 @@
-import { AddNewMemberSecondaryProps } from "../pageFunctions/types";
+import { AddNewMemberSecondaryProps } from "../../../manage/pageFunctions/types";
 
 type OnAddSignature = ({ memberName }: AddNewMemberSecondaryProps) => void;
 

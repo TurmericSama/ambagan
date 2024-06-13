@@ -1,4 +1,4 @@
-import { SpendingDataTemplate } from "@/app/manage/types";
+import { SpendingDataTemplate } from "@/app/dndkit/types";
 import MaterialCardContainer, {
   StyledColumnSilhouette,
 } from "@/components/MaterialCardContainer";

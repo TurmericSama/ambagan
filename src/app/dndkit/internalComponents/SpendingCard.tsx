@@ -5,7 +5,7 @@ import { Box, Typography } from "@mui/material";
 import AvatarStack from "@/components/AvatarStack/AvatarStack";
 import { useDraggable } from "@dnd-kit/core";
 import { useSortable } from "@dnd-kit/sortable";
-import { SpendingCardProps, SpendingDataTemplate } from "@/app/manage/types";
+import { SpendingCardProps, SpendingDataTemplate } from "@/app/dndkit/types";
 import { CSS } from "@dnd-kit/utilities";
 
 const SpendingCard: FC<SpendingCardProps> = ({ id, spending }) => {

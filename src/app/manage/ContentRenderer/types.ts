@@ -2,7 +2,7 @@ import {
   AddNewMemberSpendingSecondaryProps,
   UpdateMemberSpendingsSecondaryProps,
 } from "../pageFunctions/types";
-import { Member, SpendingColumn, Spendings } from "../types";
+import { Member, SpendingColumn, Spendings } from "../../dndkit/types";
 
 export interface ContentRendererProps {
   members: Member[];

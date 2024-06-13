@@ -6,7 +6,7 @@ this component will renderer all columns
 import React from "react";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import DroppableContainer from "./DroppableContainer";
-import { ManageViewState } from "@/app/manage/types";
+import { ManageViewState } from "@/app/dndkit/types";
 import { Stack } from "@mui/material";
 
 interface DroppableRendererProps {

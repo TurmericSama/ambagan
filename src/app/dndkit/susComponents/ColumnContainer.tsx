@@ -3,34 +3,39 @@ import { Column, Id, Task } from "./types";
 import { CSS } from "@dnd-kit/utilities";
 import { useMemo, useState } from "react";
 
-import TaskCard from "./TaskCard";
-import { Stack } from "@mui/material";
+import SpendingCard from "./TaskCard";
+import { Box, Button, Stack, TextField, Typography } from "@mui/material";
+import { Delete, Add } from "@mui/icons-material";
+import { Member, SpendingDataTemplate } from "@/app/dndkit/types";
+import { OnRemoveMemberInnerFunction } from "./pageFunctions/removeMember";
+import { OnUpdateMemberInnerFunction } from "./pageFunctions/updateMember";
+import { OnCreateSpendingInnerFunction } from "./pageFunctions/createSpending";
+import { OnUpdateSpendingInnerFunction } from "./pageFunctions/updateSpending";
 
 interface Props {
-  column: Column;
-  deleteColumn: (id: Id) => void;
-  updateColumn: (id: Id, title: string) => void;
-
-  createTask: (columnId: Id) => void;
-  updateTask: (id: Id, content: string) => void;
+  member: Member;
+  deleteColumn: OnRemoveMemberInnerFunction;
+  updateColumn: OnUpdateMemberInnerFunction;
+  createSpending: OnCreateSpendingInnerFunction;
+  updateSpending: OnUpdateSpendingInnerFunction;
   deleteTask: (id: Id) => void;
-  tasks: Task[];
+  spendings: SpendingDataTemplate[];
 }
 
 function ColumnContainer({
-  column,
+  member,
   deleteColumn,
   updateColumn,
-  createTask,
-  tasks,
+  createSpending,
+  spendings,
   deleteTask,
-  updateTask,
+  updateSpending,
 }: Props) {
   const [editMode, setEditMode] = useState(false);
 
-  const tasksIds = useMemo(() => {
-    return tasks.map((task) => task.id);
-  }, [tasks]);
+  const spendingIds = useMemo(() => {
+    return spendings.map((spending) => spending.spendingId);
+  }, [spendings]);
 
   const {
     setNodeRef,
@@ -40,10 +45,10 @@ function ColumnContainer({
     transition,
     isDragging,
   } = useSortable({
-    id: column.id,
+    id: member.memberId,
     data: {
-      type: "Column",
-      column,
+      type: "Member",
+      member,
     },
     disabled: editMode,
   });
@@ -52,6 +57,9 @@ function ColumnContainer({
     transition,
     transform: CSS.Transform.toString(transform),
   };
+
+  const handleCreateSpending = () =>
+    createSpending({ memberId: member.memberId });
 
   if (isDragging) {
     return (
@@ -73,61 +81,48 @@ function ColumnContainer({
     <Stack
       direction="column"
       ref={setNodeRef}
-      style={{ width: "350px", height: "500px", ...style }}
-      className="
-  bg-columnBackgroundColor
-  w-[350px]
-  h-[500px]
-  max-h-[500px]
-  rounded-md
-  flex
-  flex-col
-  "
+      sx={{
+        width: "350px",
+        height: "500px",
+        gap: (theme) => theme.spacing(2),
+        backgroundColor: "#FFF5C3",
+        padding: (theme) => theme.spacing(2),
+        borderRadius: (theme) => theme.shape.borderRadius,
+        ...style,
+      }}
     >
       {/* Column title */}
-      <div
+      <Box
         {...attributes}
         {...listeners}
         onClick={() => {
           setEditMode(true);
         }}
-        className="
-      bg-mainBackgroundColor
-      text-md
-      h-[60px]
-      cursor-grab
-      rounded-md
-      rounded-b-none
-      p-3
-      font-bold
-      border-columnBackgroundColor
-      border-4
-      flex
-      items-center
-      justify-between
-      "
       >
-        <div className="flex gap-2">
-          <div
-            className="
-        flex
-        justify-center
-        items-center
-        bg-columnBackgroundColor
-        px-2
-        py-1
-        text-sm
-        rounded-full
-        "
-          >
-            0
-          </div>
-          {!editMode && column.title}
+        <Stack sx={{ gap: 2 }}>
+          {!editMode && (
+            <Typography
+              variant="h5"
+              fontWeight="bold"
+              sx={{ pb: 2, textTransform: "capitalize" }}
+            >
+              {member.memberName}
+            </Typography>
+          )}
+
           {editMode && (
-            <input
-              className="bg-black focus:border-rose-500 border rounded outline-none px-2"
-              value={column.title}
-              onChange={(e) => updateColumn(column.id, e.target.value)}
+            <TextField
+              sx={{ color: "white" }}
+              value={member.memberName}
+              onChange={(e) =>
+                updateColumn({
+                  memberId: member.memberId,
+                  newMemberObject: {
+                    memberName: e.target.value,
+                    memberId: member.memberId,
+                  },
+                })
+              }
               autoFocus
               onBlur={() => {
                 setEditMode(false);
@@ -138,47 +133,42 @@ function ColumnContainer({
               }}
             />
           )}
-        </div>
-        <button
+        </Stack>
+        <Button
           onClick={() => {
-            deleteColumn(column.id);
+            deleteColumn({ memberId: member.memberId });
           }}
-          className="
-        stroke-gray-500
-        hover:stroke-white
-        hover:bg-columnBackgroundColor
-        rounded
-        px-1
-        py-2
-        "
+          variant="contained"
         >
-          {/* <TrashIcon /> */}
-        </button>
-      </div>
+          <Delete />
+        </Button>
+      </Box>
 
       {/* Column task container */}
-      <div className="flex flex-grow flex-col gap-4 p-2 overflow-x-hidden overflow-y-auto">
-        <SortableContext items={tasksIds}>
-          {tasks.map((task) => (
-            <TaskCard
-              key={task.id}
-              task={task}
+      <Stack
+        direction="column"
+        sx={{ overflowX: "hidden", overflowY: "auto", gap: 4, flex: 1 }}
+      >
+        <SortableContext items={spendingIds}>
+          {spendings.map((spending) => (
+            <SpendingCard
+              key={spending.spendingId}
+              spending={spending}
               deleteTask={deleteTask}
-              updateTask={updateTask}
+              updateSpending={updateSpending}
             />
           ))}
         </SortableContext>
-      </div>
+      </Stack>
       {/* Column footer */}
-      <button
-        className="flex gap-2 items-center border-columnBackgroundColor border-2 rounded-md p-4 border-x-columnBackgroundColor hover:bg-mainBackgroundColor hover:text-rose-500 active:bg-black"
-        onClick={() => {
-          createTask(column.id);
-        }}
+      <Button
+        onClick={handleCreateSpending}
+        sx={{ textAlign: "center" }}
+        startIcon={<Add />}
+        variant="contained"
       >
-        {/* <PlusIcon /> */}
-        Add task
-      </button>
+        New Spending
+      </Button>
     </Stack>
   );
 }

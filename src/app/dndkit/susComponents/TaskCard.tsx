@@ -1,15 +1,23 @@
-import { useState } from "react";
+import { FC, useState } from "react";
 import { Id, Task } from "./types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { Button, Card, TextField } from "@mui/material";
+import { Delete } from "@mui/icons-material";
+import { SpendingDataTemplate } from "../types";
+import { OnUpdateSpendingInnerFunction } from "./pageFunctions/updateSpending";
 
-interface Props {
-  task: Task;
+interface SpendingCardProps {
+  spending: SpendingDataTemplate;
   deleteTask: (id: Id) => void;
-  updateTask: (id: Id, content: string) => void;
+  updateSpending: OnUpdateSpendingInnerFunction;
 }
 
-function TaskCard({ task, deleteTask, updateTask }: Props) {
+const SpendingCard: FC<SpendingCardProps> = ({
+  spending,
+  deleteTask,
+  updateSpending,
+}) => {
   const [mouseIsOver, setMouseIsOver] = useState(false);
   const [editMode, setEditMode] = useState(true);
 
@@ -21,10 +29,10 @@ function TaskCard({ task, deleteTask, updateTask }: Props) {
     transition,
     isDragging,
   } = useSortable({
-    id: task.id,
+    id: spending.spendingId,
     data: {
-      type: "Task",
-      task,
+      type: "Spending",
+      spending,
     },
     disabled: editMode,
   });
@@ -41,33 +49,42 @@ function TaskCard({ task, deleteTask, updateTask }: Props) {
 
   if (isDragging) {
     return (
-      <div
+      <Card
+        sx={{
+          minHeight: "180px",
+          margin: "2px",
+          border: "solid 2px #5F6FFF",
+          backgroundColor: "#D9DDFF",
+          padding: 2,
+          ...style,
+        }}
         ref={setNodeRef}
-        style={style}
-        className="
-        opacity-30
-      bg-mainBackgroundColor p-2.5 h-[100px] min-h-[100px] items-center flex text-left rounded-xl border-2 border-rose-500  cursor-grab relative
-      "
-      />
+      >
+        hello there
+      </Card>
     );
   }
 
   if (editMode) {
     return (
-      <div
+      <Card
         ref={setNodeRef}
-        style={style}
+        sx={{
+          minHeight: "180px",
+          margin: "2px",
+          border: "solid 2px #5F6FFF",
+          backgroundColor: "#D9DDFF",
+          padding: 2,
+          ...style,
+        }}
         {...attributes}
         {...listeners}
-        className="bg-mainBackgroundColor p-2.5 h-[100px] min-h-[100px] items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-rose-500 cursor-grab relative"
       >
         <textarea
-          className="
-        h-[90%]
-        w-full resize-none border-none rounded bg-transparent text-white focus:outline-none
-        "
-          value={task.content}
+          className="description"
+          value={spending.expenseName}
           autoFocus
+          spellCheck={false}
           placeholder="Task content here"
           onBlur={toggleEditMode}
           onKeyDown={(e) => {
@@ -75,20 +92,33 @@ function TaskCard({ task, deleteTask, updateTask }: Props) {
               toggleEditMode();
             }
           }}
-          onChange={(e) => updateTask(task.id, e.target.value)}
+          onChange={(e) =>
+            updateSpending({
+              updatedSpendingObject: {
+                ...spending,
+                expenseName: e.target.value,
+              },
+            })
+          }
         />
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div
+    <Card
+      elevation={2}
       ref={setNodeRef}
-      style={style}
+      sx={{
+        minHeight: "180px",
+        margin: "2px",
+        border: "solid 2px #5F6FFF",
+        backgroundColor: "#D9DDFF",
+        padding: 2,
+        ...style,
+      }}
       {...attributes}
       {...listeners}
-      onClick={toggleEditMode}
-      className="bg-mainBackgroundColor p-2.5 h-[100px] min-h-[100px] items-center flex text-left rounded-xl hover:ring-2 hover:ring-inset hover:ring-rose-500 cursor-grab relative task"
       onMouseEnter={() => {
         setMouseIsOver(true);
       }}
@@ -96,22 +126,25 @@ function TaskCard({ task, deleteTask, updateTask }: Props) {
         setMouseIsOver(false);
       }}
     >
-      <p className="my-auto h-[90%] w-full overflow-y-auto overflow-x-hidden whitespace-pre-wrap">
-        {task.content}
-      </p>
-
+      <TextField
+        value={spending.expenseName}
+        onFocus={toggleEditMode}
+        onBlur={toggleEditMode}
+      />
       {mouseIsOver && (
-        <button
+        <Button
           onClick={() => {
-            deleteTask(task.id);
+            deleteTask(spending.spendingId);
           }}
-          className="stroke-white absolute right-4 top-1/2 -translate-y-1/2 bg-columnBackgroundColor p-2 rounded opacity-60 hover:opacity-100"
+          variant="contained"
+          sx={{ aspectRatio: "1 / 1" }}
+          color="error"
         >
-          {/* <TrashIcon /> */}
-        </button>
+          <Delete />
+        </Button>
       )}
-    </div>
+    </Card>
   );
-}
+};
 
-export default TaskCard;
+export default SpendingCard;

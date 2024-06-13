@@ -1,7 +1,7 @@
 import {
   SpendingDataTemplate,
   UpdateMemberSpendingTypeSignature,
-} from "../types";
+} from "../../dndkit/types";
 
 export interface SpendingCardProps {
   spending: SpendingDataTemplate;

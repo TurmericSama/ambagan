@@ -1,40 +1,93 @@
-import { Typography, IconButton, TextField, Stack, Card } from "@mui/material";
+import { IconButton, Stack } from "@mui/material";
 import { FC, useState } from "react";
-import ClearIcon from "@mui/icons-material/Clear";
-import { UpdateMemberNameSecondaryProps } from "../pageFunctions/types";
-import { Member } from "../types";
+import CheckIcon from "@mui/icons-material/Check";
+import CloseIcon from "@mui/icons-material/Close";
+import { Member } from "../../dndkit/types";
+import StyledInput from "@/components/StyledInput";
+import { OnRemoveMemberInnerFunction } from "@/app/dndkit/susComponents/pageFunctions/removeMember";
+import { OnUpdateMemberInnerFunction } from "@/app/dndkit/susComponents/pageFunctions/updateMember";
 
 interface MemberRowProps {
   member: Member;
-  onRemove: (memberId: string) => void;
-  onBlur: ({
-    oldMemberObject,
-    newMemberObject,
-  }: UpdateMemberNameSecondaryProps) => void;
+  onRemove: OnRemoveMemberInnerFunction;
+  onMemberUpdate: OnUpdateMemberInnerFunction;
 }
 
-const MemberRow: FC<MemberRowProps> = ({ member, onRemove, onBlur }) => {
-  const [isEditing, setIssEditing] = useState<boolean>(false);
+interface AdornmentRendererProps {
+  isDirty: boolean;
+  isFocused: boolean;
+  isHovered: boolean;
+  handleRemoveMember: () => void;
+  handleSaveMember: () => void;
+}
+
+const AdornmentRenderer: FC<AdornmentRendererProps> = ({
+  isDirty,
+  isFocused,
+  isHovered,
+  handleRemoveMember,
+  handleSaveMember,
+}) => {
+  if (!isFocused) {
+    return <></>;
+  }
+  if (isDirty || isHovered) {
+    return (
+      <IconButton onClick={handleRemoveMember}>
+        <CloseIcon fontSize="large" sx={{ color: "red" }} />
+      </IconButton>
+    );
+  }
+
+  return (
+    <Stack direction="row">
+      <IconButton onClick={handleRemoveMember}>
+        <CloseIcon fontSize="large" sx={{ color: "red" }} />
+      </IconButton>
+      <IconButton onClick={handleSaveMember}>
+        <CheckIcon fontSize="large" sx={{ color: "green" }} />
+      </IconButton>
+    </Stack>
+  );
+};
+
+const MemberRow: FC<MemberRowProps> = ({
+  member,
+  onRemove,
+  onMemberUpdate,
+}) => {
+  const [isFocused, setIsFocused] = useState<boolean>(false);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
   const [tempMember, setTempMember] = useState<Member>(member);
 
+  const isDirty = member.memberName !== tempMember.memberName;
+
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    onBlur({
-      oldMemberObject: member,
+    onMemberUpdate({
+      memberId: member.memberId,
       newMemberObject: {
         memberId: member.memberId,
         memberName: e.target.value,
       },
     });
-    setIssEditing(false);
+  };
+
+  const handleSave = () => {
+    onMemberUpdate({
+      memberId: member.memberId,
+      newMemberObject: tempMember,
+    });
   };
 
   const handleRemove = () => {
-    onRemove(member.memberId);
+    onRemove({ memberId: member.memberId });
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTempMember({ ...member, memberName: e.target.value });
   };
+
+  const handleEditEnter = () => {};
 
   return (
     <Stack
@@ -43,40 +96,41 @@ const MemberRow: FC<MemberRowProps> = ({ member, onRemove, onBlur }) => {
       mb={2}
       alignItems="center"
       onClick={() => {
-        setIssEditing(true);
+        setIsFocused(true);
+      }}
+      onMouseEnter={() => {
+        setIsHovered(true);
+      }}
+      onMouseLeave={() => {
+        setIsHovered(false);
       }}
     >
-      {isEditing ? (
-        <Stack direction="row" gap={2} alignItems="center">
-          <TextField
-            value={tempMember.memberName}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            autoFocus
-          />
-          <IconButton onClick={handleRemove}>
-            <ClearIcon />
-          </IconButton>
-        </Stack>
-      ) : (
-        <Card
-          sx={{
-            padding: 2,
-            paddingX: 4,
-            flex: 1,
-            margin: "2px",
-          }}
-          className="dropshadow"
-        >
-          <Typography
-            fontWeight="bold"
-            variant="h5"
-            sx={{ textTransform: "capitalize" }}
-          >
-            {member.memberName}
-          </Typography>
-        </Card>
-      )}
+      <StyledInput
+        // ref={ref}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && tempMember.memberName.trim() !== "") {
+            // handleAddMember();
+          }
+        }}
+        onFocus={() => setIsFocused(true)}
+        onBlurCapture={() => setIsFocused(false)}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className="dropshadow"
+        value={tempMember.memberName}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        InputProps={{
+          endAdornment: (
+            <AdornmentRenderer
+              isDirty={isDirty}
+              isFocused={isFocused}
+              handleRemoveMember={handleRemove}
+              handleSaveMember={handleSave}
+            />
+          ),
+        }}
+      />
     </Stack>
   );
 };

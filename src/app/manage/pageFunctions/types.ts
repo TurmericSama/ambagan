@@ -3,7 +3,7 @@ import {
   Member,
   SharedByTemplate,
   SpendingDataTemplate,
-} from "../types";
+} from "../../dndkit/types";
 
 export interface UpdateMemberNameInitialProps {
   setManageViewState: (manageViewState: ManageViewState) => void;

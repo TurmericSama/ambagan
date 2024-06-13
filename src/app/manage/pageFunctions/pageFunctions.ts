@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ManageViewState, Member, SharedByTemplate } from "../types";
+import { ManageViewState, Member, SharedByTemplate } from "../../dndkit/types";
 import { OnDragEndResponder } from "react-beautiful-dnd";
 import {
   UpdateMemberNameInitialProps,
@@ -136,10 +136,10 @@ export const removeMember =
     });
   };
 
-export const useNumberBank = (): {
+export const useUniqueIdBank = (): {
   takenNumbers: number[];
   availableNumbers: number[];
-  takeNumber: () => string;
+  takeUniqueId: () => string;
   releaseNumber: (number: number) => void;
 } => {
   const [takenNumbers, setTakenNumbers] = useState<number[]>([]);
@@ -153,7 +153,7 @@ export const useNumberBank = (): {
     setAvailableNumbers(bank);
   }, []);
 
-  const takeNumber = (): string => {
+  const takeUniqueId = (): string => {
     if (availableNumbers.length > 0) {
       const [number, ...rest] = availableNumbers;
       setTakenNumbers([...takenNumbers, number]);
@@ -173,7 +173,7 @@ export const useNumberBank = (): {
   return {
     takenNumbers,
     availableNumbers,
-    takeNumber,
+    takeUniqueId,
     releaseNumber,
   };
 };

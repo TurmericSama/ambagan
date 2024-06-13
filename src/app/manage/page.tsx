@@ -1,7 +1,7 @@
 "use client";
 import { Stack, Divider, Drawer, Toolbar, Box } from "@mui/material";
 import React, { useRef, useState } from "react";
-import AddMemberRow from "./AddMemberRow/AddMemberRow";
+import AddMemberRow from "../dndkit/susComponents/AddMemberRow/AddMemberRow";
 import StyledHeader from "@/components/StyledHeader";
 import { DragDropContext } from "@hello-pangea/dnd";
 import ColumnCardContainer from "@/components/ColumnCardContainer";
@@ -13,12 +13,12 @@ import {
   removeMember,
   updateMemberName,
   addBlankMemberSpending,
-  useNumberBank,
+  useUniqueIdBank,
   useUniqueSpendingIdBank,
   onDragEnd,
   updateMemberSpending,
 } from "./pageFunctions/pageFunctions";
-import { ManageViewState } from "./types";
+import { ManageViewState } from "../dndkit/types";
 
 const initialState: ManageViewState = {
   members: [],
@@ -30,7 +30,7 @@ const Manage: React.FC = () => {
   const [manageViewState, setManageViewState] =
     useState<ManageViewState>(initialState);
 
-  const { takeNumber } = useNumberBank();
+  const { takeUniqueId: takeNumber } = useUniqueIdBank();
   const { takeSpendingId } = useUniqueSpendingIdBank();
 
   console.log({ manageViewState });

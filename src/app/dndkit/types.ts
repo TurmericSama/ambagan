@@ -1,5 +1,5 @@
 import { PaperProps } from "@mui/material";
-import { UpdateMemberSpendingsSecondaryProps } from "./pageFunctions/types";
+import { UpdateMemberSpendingsSecondaryProps } from "../manage/pageFunctions/types";
 
 export interface SharedByTemplate {
   name: string;
