@@ -71,6 +71,7 @@ function ColumnContainer({
           height: "500px",
           maxHeight: "500px",
           opacity: 0.4,
+          flex: 1,
           ...style,
         }}
       ></Stack>
@@ -84,6 +85,7 @@ function ColumnContainer({
       sx={{
         width: "350px",
         height: "500px",
+        maxHeight: "500px",
         gap: (theme) => theme.spacing(2),
         backgroundColor: "#FFF5C3",
         padding: (theme) => theme.spacing(2),

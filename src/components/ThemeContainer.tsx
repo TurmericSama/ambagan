@@ -65,6 +65,14 @@ const ThemeContainer: FC<{ children: React.ReactNode }> = ({ children }) => {
             >
               DND kit
             </Button>
+            <Button
+              variant="text"
+              LinkComponent={Link}
+              href="dndbase"
+              sx={{ fontWeight: "bold" }}
+            >
+              dnd base
+            </Button>
           </Box>
         </Toolbar>
       </AppBar>

@@ -16,7 +16,7 @@ import {
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 import SpendingCard from "./TaskCard";
-import { Button, Stack, styled } from "@mui/material";
+import { Box, Button, Stack, styled } from "@mui/material";
 import MemberRenderer from "@/app/dndkit/susComponents/MemberColumn";
 import { Member, SpendingDataTemplate } from "@/app/dndkit/types";
 import {
@@ -52,7 +52,7 @@ function KanbanBoard() {
   const [members, setMembers] = useState<Member[]>(defaultMembers);
   //list of columns we can reference members
 
-  const columnsId = useMemo(
+  const memberIds = useMemo(
     () => members.map((member) => member.memberId),
     [members]
   );
@@ -93,13 +93,18 @@ function KanbanBoard() {
   });
 
   return (
-    <Stack direction="row" gap={2}>
-      <MemberRenderer
-        members={members}
-        onAdd={handleCreateMember}
-        onMemberUpdate={handleUpdateMember}
-        onRemove={handleRemoveMember}
-      />
+    <Stack
+      direction="row"
+      sx={{
+        margin: "auto",
+        height: "100vh",
+        width: "100%",
+        overflowX: "auto",
+        overflowY: "hidden",
+        alignItems: "center",
+        paddingX: "40px",
+      }}
+    >
       <DndContext
         sensors={sensors}
         onDragStart={onDragStart}
@@ -107,15 +112,14 @@ function KanbanBoard() {
         onDragOver={onDragOver}
         collisionDetection={closestCenter}
       >
-        <DndOuterContainer direction="row">
-          <Stack
-            direction="row"
+        <Box sx={{ margin: "auto", display: "flex", gap: 4 }}>
+          <Box
             sx={{
               flex: 1,
               gap: 4,
             }}
           >
-            <SortableContext items={columnsId}>
+            <SortableContext items={memberIds}>
               {members.map((member) => (
                 <ColumnContainer
                   key={member.memberId}
@@ -131,9 +135,8 @@ function KanbanBoard() {
                 />
               ))}
             </SortableContext>
-          </Stack>
-        </DndOuterContainer>
-
+          </Box>
+        </Box>
         {createPortal(
           <DragOverlay>
             {activeMember && (
@@ -260,10 +263,3 @@ function KanbanBoard() {
 }
 
 export default KanbanBoard;
-
-const DndOuterContainer = styled(Stack)(({ theme }) => ({
-  margin: "auto",
-  gap: 4,
-  maxWidth: "1200px",
-  overflow: "auto",
-}));
