@@ -1,14 +1,13 @@
-import MemberRow from "@/app/manage/MemberRow/MemberRow";
+import MemberRow from "./MemberRow";
 import { FC } from "react";
 import { Stack, Typography, styled } from "@mui/material";
 import HorizontalDivider from "@/components/HorizontalDivider";
-import AddMemberRow from "@/app/dndkit/susComponents/AddMemberRow/AddMemberRow";
-import {
-  CreateSecondaryFunction,
-  OnRemoveMemberInnerFunction,
-  OnUpdateMemberInnerFunction,
-} from "./KanbanBoard";
-import { Member } from "@/app/dndkit/types";
+import AddMemberRow from "./AddMemberRow";
+
+import { Member } from "./types";
+import { OnRemoveMemberInnerFunction } from "@/app/dndbase/pageFunctions/removeMember";
+import { OnUpdateMemberInnerFunction } from "@/app/dndbase/pageFunctions/updateMember";
+import { OnCreateMemberInnerFunction } from "./pageFunctions/createMember";
 
 const MemberColumn = styled(Stack)(({ theme }) => ({
   width: "350px",
@@ -16,6 +15,7 @@ const MemberColumn = styled(Stack)(({ theme }) => ({
   gap: theme.spacing(2),
   backgroundColor: "#FFF5C3",
   padding: theme.spacing(2),
+  paddingTop: theme.spacing(4),
   borderRadius: theme.spacing(2),
   margin: "auto",
 }));
@@ -32,7 +32,7 @@ export type OnMemberUpdate = ({
 
 interface RenderMemberColumnProps {
   members: any[];
-  onAdd: CreateSecondaryFunction;
+  onAdd: OnCreateMemberInnerFunction;
   onMemberUpdate: OnUpdateMemberInnerFunction;
   onRemove: OnRemoveMemberInnerFunction;
 }
@@ -44,8 +44,8 @@ const RenderMemberColumn: FC<RenderMemberColumnProps> = ({
   onRemove,
 }) => {
   return (
-    <MemberColumn>
-      <Typography variant="h5" fontWeight="bold">
+    <MemberColumn className="dropshadow">
+      <Typography variant="h5" fontWeight="bold" color="primary">
         Members
       </Typography>
       <Stack sx={{ flex: 1, overflowY: "auto" }}>

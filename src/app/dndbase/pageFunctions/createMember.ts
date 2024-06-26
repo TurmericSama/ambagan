@@ -1,4 +1,4 @@
-import { Member } from "@/app/dndkit/types";
+import { Member } from "..//types";
 
 export interface CreateMemberFunctionProps {
   setMembers: React.Dispatch<React.SetStateAction<Member[]>>;
@@ -10,17 +10,17 @@ export interface CreateMemberInnerProps {
   memberName: string;
 }
 
-export type CreateMemberFunction = ({
+export type OnCreateMemberOutterFunction = ({
   setMembers,
 }: CreateMemberFunctionProps) => ({
   memberName,
 }: CreateMemberInnerProps) => void;
 
-export type CreateSecondaryFunction = ({
+export type OnCreateMemberInnerFunction = ({
   memberName,
 }: CreateMemberInnerProps) => void;
 
-export const createMember: CreateMemberFunction =
+export const createMember: OnCreateMemberOutterFunction =
   ({ setMembers, takeUniqueId, members }) =>
   ({ memberName }: CreateMemberInnerProps) => {
     const columnToAdd: Member = {

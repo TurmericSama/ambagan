@@ -1,12 +1,27 @@
-export type Id = string | number;
+export interface Member {
+  memberId: string;
+  memberName: string;
+}
 
-export type Column = {
-  id: Id;
-  title: string;
-};
+export interface SharedByTemplate {
+  name: string;
+  id: number;
+}
 
-export type Task = {
-  id: Id;
-  columnId: Id;
-  content: string;
-};
+export interface SpendingDataTemplate {
+  expenseName?: string;
+  amount?: number;
+  sharedBy?: SharedByTemplate[];
+  spendingId: string;
+  memberId: string;
+}
+
+export interface AddNewMemberSecondaryProps {
+  memberName: string;
+}
+
+type OnAddSignature = ({ memberName }: AddNewMemberSecondaryProps) => void;
+
+export interface MemberRowProps {
+  onAdd: OnAddSignature;
+}

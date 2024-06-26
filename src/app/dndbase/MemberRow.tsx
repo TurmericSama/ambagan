@@ -2,10 +2,10 @@ import { IconButton, Stack } from "@mui/material";
 import { FC, useState } from "react";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
-import { Member } from "../../dndkit/types";
+import { Member } from "./types";
 import StyledInput from "@/components/StyledInput";
-import { OnRemoveMemberInnerFunction } from "@/app/dndkit/susComponents/pageFunctions/removeMember";
-import { OnUpdateMemberInnerFunction } from "@/app/dndkit/susComponents/pageFunctions/updateMember";
+import { OnRemoveMemberInnerFunction } from "./pageFunctions/removeMember";
+import { OnUpdateMemberInnerFunction } from "./pageFunctions/updateMember";
 
 interface MemberRowProps {
   member: Member;
@@ -123,6 +123,7 @@ const MemberRow: FC<MemberRowProps> = ({
         InputProps={{
           endAdornment: (
             <AdornmentRenderer
+              isHovered={false}
               isDirty={isDirty}
               isFocused={isFocused}
               handleRemoveMember={handleRemove}

@@ -1,5 +1,4 @@
-import { useUniqueSpendingIdBank } from "@/app/manage/pageFunctions/pageFunctions";
-import { SpendingDataTemplate } from "../../types";
+import { SpendingDataTemplate } from "../types";
 
 export interface CreateSpendingOutterFunctionProps {
   updateSpendings: React.Dispatch<React.SetStateAction<SpendingDataTemplate[]>>;

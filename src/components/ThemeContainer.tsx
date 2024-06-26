@@ -24,6 +24,7 @@ const ThemeContainer: FC<{ children: React.ReactNode }> = ({ children }) => {
     },
     typography: {
       fontWeightBold: 700,
+      fontFamily: "Euclid",
     },
   });
 

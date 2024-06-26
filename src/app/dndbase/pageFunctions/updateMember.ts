@@ -1,4 +1,4 @@
-import { Member } from "../../types";
+import { Member } from "../types";
 
 export interface OnUpdateMemberFunctionProps {
   members: Member[];

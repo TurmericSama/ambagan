@@ -1,4 +1,4 @@
-import { SpendingDataTemplate } from "../../types";
+import { SpendingDataTemplate } from "..//types";
 
 export interface SpendingUpdateOutterFunctionProps {
   spendings: SpendingDataTemplate[];
