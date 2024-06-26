@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ColumnContainer from "./ColumnContainer";
 import {
   DndContext,
@@ -27,6 +27,11 @@ import { createSpending } from "./pageFunctions/createSpending";
 import { onUpdateSpendings } from "./pageFunctions/updateSpending";
 
 const KanbanBoard = () => {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
   const [members, setMembers] = useState<Member[]>([]);
   //list of columns we can reference members
 
@@ -225,28 +230,30 @@ const KanbanBoard = () => {
               </Box>
             </Box>
 
-            {createPortal(
-              <DragOverlay>
-                {activeMember && (
-                  <ColumnContainer
-                    member={activeMember}
-                    // deleteColumn={deleteColumn}
-                    createSpending={() => {}}
-                    spendings={spendings.filter(
-                      (spending) => spending.memberId === activeMember.memberId
-                    )}
-                    updateSpending={handleUpdateSpending}
-                  />
-                )}
-                {activeSpending && (
-                  <SpendingCard
-                    spending={activeSpending}
-                    updateSpending={() => {}}
-                  />
-                )}
-              </DragOverlay>,
-              document.body
-            )}
+            {isMounted &&
+              createPortal(
+                <DragOverlay>
+                  {activeMember && (
+                    <ColumnContainer
+                      member={activeMember}
+                      // deleteColumn={deleteColumn}
+                      createSpending={() => {}}
+                      spendings={spendings.filter(
+                        (spending) =>
+                          spending.memberId === activeMember.memberId
+                      )}
+                      updateSpending={handleUpdateSpending}
+                    />
+                  )}
+                  {activeSpending && (
+                    <SpendingCard
+                      spending={activeSpending}
+                      updateSpending={() => {}}
+                    />
+                  )}
+                </DragOverlay>,
+                document.body
+              )}
           </DndContext>
         </Stack>
       </Box>
