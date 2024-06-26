@@ -185,7 +185,14 @@ const KanbanBoard = () => {
 
   return (
     <Box sx={{ display: "flex", height: "100%", gap: 5 }}>
-      <Box sx={{ display: "flex", flex: 0.3, height: "100%" }}>
+      <Box
+        sx={{
+          display: "flex",
+          flex: 0.3,
+          height: "100%",
+          alignItems: "center",
+        }}
+      >
         <RenderMemberColumn
           members={members}
           onAdd={handleAddMember}
