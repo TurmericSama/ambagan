@@ -67,31 +67,13 @@ const KanbanBoard = () => {
     spendings,
     updateSpendings,
     takeSpendingId,
+    members,
   });
 
   const handleUpdateSpending = onUpdateSpendings({
     spendings,
     updateSpendings,
   });
-
-  // const createNewColumn = () => {
-  //   const memberToAdd: Member = {
-  //     memberId: generateId().toString(),
-  //     memberName: `Member ${members.length + 1}`,
-  //   };
-
-  //   setMembers([...members, memberToAdd]);
-  // };
-
-  // const deleteColumn = (id: Id) => {
-  //   const filteredMembers = members.filter((member) => member.memberId !== id);
-  //   setMembers(filteredMembers);
-
-  //   const newSpendings = spendings.filter(
-  //     (spending) => spending.memberId !== id
-  //   );
-  //   updateSpendings(newSpendings);
-  // };
 
   const onDragStart = (event: DragStartEvent) => {
     if (event.active.data.current?.type === "Member") {

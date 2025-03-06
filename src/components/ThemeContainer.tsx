@@ -1,14 +1,7 @@
 "use client";
-import {
-  AppBar,
-  Box,
-  Button,
-  Toolbar,
-  Typography,
-  Drawer,
-} from "@mui/material";
+import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
 import Link from "next/link";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { createTheme, ThemeProvider, styled } from "@mui/material/styles";
 import { FC } from "react";
 import "../components/font.css";
 
@@ -28,24 +21,23 @@ const ThemeContainer: FC<{ children: React.ReactNode }> = ({ children }) => {
     },
   });
 
+  const StyledAppbar = styled(AppBar)(({}) => ({
+    backgroundColor: "#D9DDFF",
+    width: "100%",
+    top: 0,
+  }));
+
   return (
     <ThemeProvider theme={theme}>
-      <AppBar
-        position="fixed"
-        sx={{
-          backgroundColor: "#D9DDFF",
-          width: "100%",
-          top: 0,
-        }}
-      >
+      <StyledAppbar position="fixed">
         <Toolbar variant="dense">
           <Typography
             variant="h6"
             fontWeight="bold"
             fontStyle="italic"
             component={Link}
-            href="/"
-            sx={{ color: "#5F6FFF" }}
+            href="split-board"
+            color="primary"
           >
             SPLTR.io
           </Typography>
@@ -53,30 +45,14 @@ const ThemeContainer: FC<{ children: React.ReactNode }> = ({ children }) => {
             <Button
               variant="text"
               LinkComponent={Link}
-              href="manage"
+              href="split-board"
               sx={{ fontWeight: "bold" }}
             >
-              Manage
-            </Button>
-            <Button
-              variant="text"
-              LinkComponent={Link}
-              href="dndkit"
-              sx={{ fontWeight: "bold" }}
-            >
-              DND kit
-            </Button>
-            <Button
-              variant="text"
-              LinkComponent={Link}
-              href="dndbase"
-              sx={{ fontWeight: "bold" }}
-            >
-              dnd base
+              Split Board
             </Button>
           </Box>
         </Toolbar>
-      </AppBar>
+      </StyledAppbar>
       <Toolbar variant="dense" />
       {children}
     </ThemeProvider>

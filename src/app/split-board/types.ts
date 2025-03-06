@@ -11,7 +11,7 @@ export interface SharedByTemplate {
 export interface SpendingDataTemplate {
   expenseName?: string;
   amount?: number;
-  sharedBy?: SharedByTemplate[];
+  sharedBy?: Member[];
   spendingId: string;
   memberId: string;
 }

@@ -1,9 +1,10 @@
-import { SpendingDataTemplate } from "../types";
+import { Member, SpendingDataTemplate } from "../types";
 
 export interface CreateSpendingOutterFunctionProps {
   updateSpendings: React.Dispatch<React.SetStateAction<SpendingDataTemplate[]>>;
   spendings: SpendingDataTemplate[];
   takeSpendingId: () => string;
+  members: Member[];
 }
 
 export interface CreateSpendingInnerFunctionProps {
@@ -20,14 +21,14 @@ export type OnCreateSpendingOutterFunction = ({
 }: CreateSpendingOutterFunctionProps) => OnCreateSpendingInnerFunction;
 
 export const createSpending: OnCreateSpendingOutterFunction =
-  ({ updateSpendings, spendings, takeSpendingId }) =>
+  ({ updateSpendings, spendings, takeSpendingId, members }) =>
   ({ memberId }) => {
     const blankSpending: SpendingDataTemplate = {
       memberId,
       spendingId: takeSpendingId(),
       amount: 0,
       expenseName: "New Blank Spending",
-      sharedBy: [],
+      sharedBy: members,
     };
     updateSpendings([...spendings, blankSpending]);
   };

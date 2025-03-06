@@ -1,4 +1,4 @@
-import { Member } from "..//types";
+import { Member } from "../types";
 
 export interface CreateMemberFunctionProps {
   setMembers: React.Dispatch<React.SetStateAction<Member[]>>;

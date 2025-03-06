@@ -28,12 +28,24 @@ const AdornmentRenderer: FC<AdornmentRendererProps> = ({
   handleRemoveMember,
   handleSaveMember,
 }) => {
-  if (!isFocused) {
+  const nonPropagatingRemoveAction =
+    (callback: () => void) => (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+      callback();
+    };
+
+  const _handleRemoveMember = nonPropagatingRemoveAction(handleRemoveMember);
+  const _handleSaveMember = nonPropagatingRemoveAction(handleSaveMember);
+
+  const hasNoAction = !isFocused && !isHovered && !isDirty;
+  if (hasNoAction) {
     return <></>;
   }
-  if (isDirty || isHovered) {
+
+  if (isHovered && !isFocused) {
     return (
-      <IconButton onClick={handleRemoveMember}>
+      <IconButton onClick={_handleRemoveMember}>
         <CloseIcon fontSize="large" sx={{ color: "red" }} />
       </IconButton>
     );
@@ -41,10 +53,10 @@ const AdornmentRenderer: FC<AdornmentRendererProps> = ({
 
   return (
     <Stack direction="row">
-      <IconButton onClick={handleRemoveMember}>
+      <IconButton onClick={_handleRemoveMember}>
         <CloseIcon fontSize="large" sx={{ color: "red" }} />
       </IconButton>
-      <IconButton onClick={handleSaveMember}>
+      <IconButton onClick={_handleSaveMember}>
         <CheckIcon fontSize="large" sx={{ color: "green" }} />
       </IconButton>
     </Stack>
@@ -123,7 +135,7 @@ const MemberRow: FC<MemberRowProps> = ({
         InputProps={{
           endAdornment: (
             <AdornmentRenderer
-              isHovered={false}
+              isHovered={isHovered}
               isDirty={isDirty}
               isFocused={isFocused}
               handleRemoveMember={handleRemove}

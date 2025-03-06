@@ -5,8 +5,8 @@ import HorizontalDivider from "@/components/HorizontalDivider";
 import AddMemberRow from "./AddMemberRow";
 
 import { Member } from "./types";
-import { OnRemoveMemberInnerFunction } from "@/app/dndbase/pageFunctions/removeMember";
-import { OnUpdateMemberInnerFunction } from "@/app/dndbase/pageFunctions/updateMember";
+import { OnRemoveMemberInnerFunction } from "@/app/split-board/pageFunctions/removeMember";
+import { OnUpdateMemberInnerFunction } from "@/app/split-board/pageFunctions/updateMember";
 import { OnCreateMemberInnerFunction } from "./pageFunctions/createMember";
 
 const MemberColumn = styled(Stack)(({ theme }) => ({

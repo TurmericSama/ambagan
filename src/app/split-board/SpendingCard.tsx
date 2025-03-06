@@ -8,8 +8,15 @@ import {
 } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Box, Card, Stack, Typography } from "@mui/material";
-import { SpendingDataTemplate } from "./types";
+import {
+  Box,
+  Button,
+  Card,
+  IconButton,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { Member, SpendingDataTemplate } from "./types";
 import { useTheme } from "@mui/material/styles";
 import { OnUpdateSpendingInnerFunction } from "./pageFunctions/updateSpending";
 import NoscrubNumberInput from "./components/NoscrubNumberInput";
@@ -23,12 +30,26 @@ interface Props {
 
 type EditTarget = keyof SpendingDataTemplate;
 
+interface NewSharedByArrayProps {
+  newSharedByArray?: Member[];
+}
+
 const SpendingCard: React.FC<Props> = ({ spending, updateSpending }) => {
   const theme = useTheme();
+  const { sharedBy } = spending;
   const [editMode, setEditMode] = useState(false);
+  const [viewSharers, setViewSharers] = useState(false);
   const [editTarget, setEditTarget] = useState<EditTarget | null>(null);
   const [expenseName, setExpenseName] = useState(spending.expenseName);
   const [amount, setAmount] = useState(spending.amount ?? 0);
+
+  const handleUpdateSharers = ({ newSharedByArray }: NewSharedByArrayProps) => {
+    const updatedSpendingObject = {
+      ...spending,
+      sharedBy: newSharedByArray,
+    };
+    updateSpending({ updatedSpendingObject });
+  };
 
   const {
     setNodeRef,
@@ -43,7 +64,7 @@ const SpendingCard: React.FC<Props> = ({ spending, updateSpending }) => {
       type: "SpendingDataTemplate",
       spending,
     },
-    disabled: editMode,
+    disabled: editMode || viewSharers,
   });
 
   const style = {
@@ -69,11 +90,6 @@ const SpendingCard: React.FC<Props> = ({ spending, updateSpending }) => {
       updateSpending({ updatedSpendingObject });
     }
   };
-
-  // if (String(amount).length > 5) {
-  //   alert("Amount is no realistic");
-  //   setAmount(0);
-  // }
 
   const handleOnBlur: FocusEventHandler<HTMLInputElement> = () => {
     toggleEditMode();
@@ -103,6 +119,10 @@ const SpendingCard: React.FC<Props> = ({ spending, updateSpending }) => {
 
   const handleAmountChange = () => {
     toggleEditMode("amount");
+  };
+
+  const handleToggleViewSharers = () => {
+    setViewSharers((prev) => !prev);
   };
 
   if (isDragging) {
@@ -166,34 +186,45 @@ const SpendingCard: React.FC<Props> = ({ spending, updateSpending }) => {
         border: "solid 2px #5F6FFF",
         backgroundColor: "#D9DDFF",
         padding: theme.spacing(2),
-        display: "flex",
-        flexDirection: "column",
       }}
       elevation={3}
     >
-      <Stack direction="row" justifyContent="space-between">
+      <Box
+        sx={{ display: "flex", flex: 1, height: "100%" }}
+        flexDirection="column"
+      >
+        <Stack direction="row" justifyContent="space-between">
+          <Typography
+            fontWeight="bold"
+            variant="h6"
+            textTransform="capitalize"
+            color="black"
+            onClick={handleExpenseNameChange}
+          >
+            {expenseName}
+          </Typography>
+        </Stack>
+
         <Typography
           fontWeight="bold"
-          variant="h6"
+          variant="body1"
           textTransform="capitalize"
           color="black"
-          onClick={handleExpenseNameChange}
+          onClick={handleAmountChange}
         >
-          {expenseName}
+          {`Php ${amount}`}
         </Typography>
-      </Stack>
-
-      <Typography
-        fontWeight="bold"
-        variant="body1"
-        textTransform="capitalize"
-        color="black"
-        onClick={handleAmountChange}
-      >
-        {`Php ${amount}`}
-      </Typography>
-      <Box sx={{ display: "flex", flex: 1, justifyContent: "flex-end" }}>
-        <AvatarStack />
+        <Box sx={{ flex: 1 }} />
+        <Stack direction="row">
+          <AvatarStack
+            sharers={sharedBy}
+            viewSharers={handleToggleViewSharers}
+            updateSharers={handleUpdateSharers}
+          />
+          <Button variant="contained" size="small">
+            Select Spliters
+          </Button>
+        </Stack>
       </Box>
     </Card>
   );

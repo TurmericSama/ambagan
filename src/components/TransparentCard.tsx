@@ -39,7 +39,3 @@ const TransparentCard = styled(Box)(({ theme }) => ({
 }));
 
 export default TransparentCard;
-
-/*
-
-*/

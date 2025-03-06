@@ -43,6 +43,7 @@ const ColumnContainer: React.FC<Props> = ({
       type: "Member",
       member,
     },
+    // disabled:
   });
 
   const style = {
@@ -61,6 +62,7 @@ const ColumnContainer: React.FC<Props> = ({
         sx={{
           ...style,
           borderRadius: theme.shape.borderRadius,
+          opacity: 0.4,
         }}
       />
     );
@@ -93,7 +95,7 @@ const ColumnContainer: React.FC<Props> = ({
           flexDirection: "column",
           gap: 4,
           overflowX: "hidden",
-          overflowY: "scroll",
+          overflowY: "auto",
           marginBottom: 2,
           paddingTop: 2,
         }}
