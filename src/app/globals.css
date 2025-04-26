@@ -20,7 +20,8 @@
 html, body {
   width: 100%;  
   height: 100%;
-  background-color: #ACB4FF;
+  background: url('../../public/layered-waves-haikei.svg') no-repeat center center fixed;
+  background-size: cover;
   font-family: 'Euclid';
   .MuiTypography-root {
     font-family: 'Euclid'
