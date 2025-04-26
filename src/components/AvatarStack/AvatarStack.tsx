@@ -34,7 +34,7 @@ const StackingContainer = styled(Stack)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
 }));
 
-const StyledAvatar = styled(Avatar)(({}) => ({
+const StyledAvatar = styled(Avatar)(({ }) => ({
   height: "18px",
   width: "18px",
   fontSize: "0.7rem",
@@ -80,7 +80,7 @@ const AvatarStack: FC<AvatarStackProps> = ({
     <>
       <StackingContainer spacing={-0.4} direction="row" onClick={toggleDialog}>
         {sharers?.map((member) => (
-          <Tooltip title={member.memberName}>
+          <Tooltip key={`${member.memberName}-key`} title={member.memberName}>
             <StyledAvatar key={member.memberId}>
               {member.memberName[0]}
             </StyledAvatar>
